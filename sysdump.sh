@@ -100,8 +100,12 @@ cat - >/var/tmp/list <<EOF
 /var/log/errors
 /var/log/kernel
 /var/log/wtmp
-/var/log/boot.log
 /var/log/cron
+/var/log/ha-log
+/var/log/ha-debug
+/var/log/ha.log
+/var/log/debug.log
+/var/log/corosync.log
 EOF
 tar zcf $dumpdir/log.tgz --files-from=/var/tmp/list 2>/dev/null
 rm -f /var/log/lastlog.last /var/tmp/list
