@@ -1,5 +1,5 @@
-#import <getopt.h>
-#import <stdio.h>
+#include <getopt.h>
+#include <stdio.h>
  
 typedef enum {
     SOURCE,
@@ -90,7 +90,7 @@ int main (int argc, const char *argv[]) {
  
     FILE *file = fopen(inputFile, "r");
  
-    char prevChar = '', thisChar = '';
+    char prevChar = ' ', thisChar = ' ';
     State currentState = SOURCE;
  
     while ((thisChar = fgetc(file)) != EOF) {
