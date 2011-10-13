@@ -1,5 +1,5 @@
 #!/bin/bash
-#kill oldest 30 idle connections 
+#kill oldest  idle connections 
 #author wgzhao (wgzhao@kingbase.com.cn)
 
 #connection limit
@@ -15,6 +15,10 @@ querystr="select procpid,current_query from sys_stat_activity order by backend_s
 ISQL="/usr/local/kingbase/bin/isql"
 output="/var/tmp/$$.txt"
 
+if [ $UID -eq 0 ];then
+	echo "just normal user,we recommends using KingbaseES owner User(e.g kingbase)"
+	exit 3
+fi
 #query current all connections and status
 $ISQL  -t -o $output -h "$servername" -U "$user" -W "$pswd" -c "$querystr" "$dbname"
 if [ $? -gt 0 ];then
@@ -37,7 +41,6 @@ for i in $ids
 do
 	echo "alter system kill session $i;" >>$sql
 done
-
 $ISQL  -t -o $output -h "$servername" -U "$user" -W "$pswd" -f "$sql" "$dbname"
 #cleanup
 rm -f $output
