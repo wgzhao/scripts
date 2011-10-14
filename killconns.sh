@@ -3,17 +3,23 @@
 #author wgzhao (wgzhao@kingbase.com.cn)
 
 #connection limit
-connlimit=7
+connlimit=4
 #connections will be killed
-killconns=5
+killconns=4
 #kingbase connnection
 user="SYSTEM"
 pswd="kb613"
 servername="192.168.100.103"
 dbname="KB613"
-querystr="select procpid,current_query from sys_stat_activity order by backend_start asc;"
 ISQL="/usr/local/kingbase/bin/isql"
+
+#DOT NOT EDIT
+#using query_start not backend_start, think about LRU 11-10-14 10:12
+querystr="select procpid,current_query from sys_stat_activity order by query_start asc;"
+
 output="/var/tmp/$$.txt"
+unset LANG
+unset LANGUAGE
 
 if [ $UID -eq 0 ];then
 	echo "just normal user,we recommends using KingbaseES owner User(e.g kingbase)"
