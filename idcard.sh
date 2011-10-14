@@ -1,7 +1,7 @@
 #!/bin/bash
 #Description: Convert your 15bit old ID card into 18bit ID Card
-#Author: mlsx mlsx.xplore(at) gmail.com
-#Blog: http://mlsx.xplore.cn
+#Author: wgzhao wgzhao # gmail dot com
+#Blog: http://blog.wgzhao.com
 
 crc=( 1 0 X 9 8 7 6 5 4 3 2 ) #CRC bit
 weight=( 7 9 10 5 8 4 2 1 6 3 7 9 10 5 8 4 2 ) #weight factor
