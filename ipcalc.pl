@@ -1,571 +1,1060 @@
 #!/usr/bin/perl -w
 
-# 2/2000 krischan at jodies.cx
-#
-# 0.14    Release
-# 0.14.1  Allow netmasks given as dotted quads
-# 0.15    Colorize Classbits, Mark new bits in network
-# 0.16    25.9.2000 Accept <addr>/<cidr> as first argument
-#         Print <pre> tag in the script
-# 0.17    Bugfix
-# 0.18    Replace \n with <br> in HTML to make konqueror work. Argh.
-# 0.19    HTML modified again to make Internet Exploder work. Argh ** 2
-#         Added -v Option
-# 0.2     New Tabular Format. Idea by Kevin Ivory
-# 0.21    
-# 0.22    Don't show -1 if netmask is 32 (Sven Anderson)
-# 0.23    Removed broken prototyping. Thanks to Scott Davis sdavis(a)austin-texas.net
-# 0.31    4/1/2001 Print cisco wildcard (inverse netmask). 
-#         Idea by Denis Alan Hainsworth denis(a)ans.net
-# 0.32    5/21/2001 - Accepts now inverse netmask as argument (Alan's idea again)
-#         Fixed missing trailing zeros in sub/supernets
-#         Warns now when given netmasks are illegal
-#         Added option to suppress the binary output
-#         Added help text
-# 0.33	  5/21/2001 Cosmetic
-# 0.34    6/19/2001 Use default netmask of class when no netmask is given
-# 0.35    12/2/2001 Fixed big-endian bug in subnets(). This was reported 
-#         by Igor Zozulya and Steve Kent. Thank you for your help 
-#         and access to your sparc machine!
+
+#  IPv4 Calculator
+#  Copyright (C) Krischan Jodies 2000 - 2004
+#  krischan()jodies.de, http://jodies.de/ipcalc
+#   
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#   
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#   
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 use strict;
 
-my $version = '0.35 12/2/2001';
+my $version = '0.41';
 
-
-my $private = "(Private Internet RFC 1918)";
-
-my @privmin = qw (10.0.0.0        172.16.0.0      192.168.0.0);
-my @privmax = qw (10.255.255.255  172.31.255.255  192.168.255.255);
 my @class   = qw (0 8 16 24 4 5 5);
 
-my $allhosts;
-my $mark_newbits = 0;
-my $print_html = 0;
-my $print_bits = 1;
-my $print_only_class = 0;
-
-my $qcolor = "\033[34m"; # dotted quads, blue
-my $ncolor = "\033[m";   # normal, black
-my $bcolor = "\033[33m"; # binary, yellow
-my $mcolor = "\033[31m"; # netmask, red
-my $ccolor = "\033[35m"; # classbits, magenta
-my $dcolor = "\033[32m"; # subnet bits, green
+my $quads_color = "\033[34m"; # dotted quads, blue
+my $norml_color = "\033[m";   # normal, black
+#my $binry_color = "\033[1m\033[46m\033[37m"; # binary, yellow
+my $binry_color = "\033[33m"; # binary, yellow
+my $mask_color = "\033[31m"; # netmask, red
+my $class_color = "\033[35m"; # classbits, magenta
+my $subnt_color = "\033[0m\033[32m"; # subnet bits, green
+my $error_color = "\033[31m";
 my $sfont  = "";
 my $break  ="\n";
 
-my $h;                   # Host address
+my $color_old = "";
+my $color_actual = "";
 
-foreach (@privmin) {
-    $_ = &bintoint(&dqtobin("$_"));
-}
+my $opt_text        = 1;
+my $opt_html        = 0;
+my $opt_color       = 0;
+my $opt_print_bits  = 1;
+my $opt_print_only_class = 0;
+my $opt_split       = 0;
+my $opt_deaggregate   = 0;
+my $opt_version     = 0;
+my $opt_help        = 0;
+my @opt_split_sizes;
+my @arguments;
+my $error = "";
+my $thirtytwobits = 4294967295; # for masking bitwise not on 64 bit arch
 
-foreach (@privmax) {
-    $_ = &bintoint(&dqtobin("$_"));
-}
+main();
+exit;
 
-
-if (! defined ($ARGV[0])) {
-    &usage;
-    exit();
-}
-
-
-if (defined ($ARGV[0]) && $ARGV[0] eq "-help") {
-    help();
-}
-
-if (defined ($ARGV[0]) && $ARGV[0] eq "-b") {
-    $ARGV[0] = "-n";
-    $print_bits = 0;
-}
-
-if (defined ($ARGV[0]) && $ARGV[0] eq "-v") {
-    print "$version\n";
-    exit 0;
-}
-
-if (defined ($ARGV[0]) && $ARGV[0] eq "-n") {
-    shift @ARGV;
-    $qcolor = '';
-    $ncolor = '';
-    $bcolor = '';
-    $mcolor = '';
-    $ccolor = '';
-    $dcolor = '';
-    $sfont  = '';
-}
-
-if (defined ($ARGV[0]) && $ARGV[0] eq "-c") {
-    shift @ARGV;
-    $print_only_class = 1;
-}
-
-if (defined ($ARGV[0]) && $ARGV[0] eq "-h") {
-    shift @ARGV;
-    $print_html = 1;
-    $qcolor = '<font color="#0000ff">' ;
-    $ncolor = '<font color="#000000">';
-    $bcolor = '<font color="#909090">';
-    $mcolor = '<font color="#ff0000">';
-    $ccolor = '<font color="#009900">';
-    $dcolor = '<font color="#663366">';
-    $sfont  = '</font>';
-    $break  = "<br>";
-    $private = "(<a href=\"http://www.ietf.org/rfc/rfc1918.txt\">Private Internet</a>)";
-    print "<pre>\n";
-    print "<!-- Version $version -->\n";
-}
-
-
-my $host  = "192.168.0.1";
-my $mask  = '';
-my $mask2 = '';
-my @arg;
-
-
-if ((defined $ARGV[0]) &&($ARGV[0] =~ /^(.+?)\/(.+)$/)) {
-  $arg[0] = $1;
-  $arg[1] = $2;
-  if (defined($ARGV[1])) {
-   $arg[2] = $ARGV[1];
-  }
-} else {
-  @arg = @ARGV;
-}
-
-if (defined $arg[0]) {
-    $host = $arg[0];
-}
-if (! ($host = &is_valid_dq($host)) ) {
-    print "$mcolor Illegal value for ADDRESS ($arg[0])$ncolor\n";
-}
-
-
-
-if (defined $arg[1]) {
-    $mask = $arg[1];
-    if (! ($mask = is_valid_netmask($mask)) ) {
-	print "$mcolor Illegal value for NETMASK ($arg[1])$ncolor\n";
-    }
-} 
-else 
+sub main 
 {
-# if mask is not defined - take the default mask of the network class
-   $mask = $class[getclass(dqtobin($host))];
+   my $address  = -1;
+   my $address2 = -1;
+   my $network  = -1;
+   my $mask1    = -1;
+   my $mask2    = -1;
+
+   if (! defined ($ARGV[0])) {
+      usage();
+      exit();
+   }
+
+   @ARGV = getopts();
+
+   if ($opt_help) {
+      help();
+      exit;
+   }
+
+   if ($opt_version) {
+      print "$version\n";
+      exit;
+   }
+
+#print "opt_html   $opt_html\n";
+#print "opt_color  $opt_color\n";
+#print "opt_print_bits $opt_print_bits\n";
+#print "opt_print_only_class $opt_print_only_class\n";
+#print "opt_deaggregate $opt_deaggregate\n";
+
+   if (! $opt_color) {
+      $quads_color = '';
+      $norml_color = '';
+      $binry_color = '';
+      $mask_color = '';
+      $class_color = '';
+      $subnt_color = '';
+      $sfont  = '';
+   }
+
+   if ($opt_html) {
+      $quads_color = '<font color="#0000ff">' ;
+      $norml_color = '<font color="#000000">';
+      $binry_color = '<font color="#909090">';
+      $mask_color = '<font color="#ff0000">';
+      $class_color = '<font color="#009900">';
+      $subnt_color = '<font color="#663366">';
+      $sfont  = '</font>';
+      $break  = "<br>";
+      #$private = "(<a href=\"http://www.ietf.org/rfc/rfc1918.txt\">Private Internet</a>)";
+#      print "<pre>\n";
+print << 'EOF';
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta HTTP-EQUIV="content-type" CONTENT="text/html; charset=UTF-8">
+<title>Bla</title>
+</head>
+<body>
+EOF
+      print "<!-- Version $version -->\n";
+   }
+
+#   foreach (@arguments) {
+#      print "arguments: $_\n";
+#   }
+
+#   foreach (@ARGV) {
+#      print "ARGV: $_\n";
+#   }
+  
+   # get base address
+   if (defined $ARGV[0]) {
+      $address = argton($ARGV[0],0);
+   }
+   if ($address == -1) {
+      $error .= "INVALID ADDRESS: $ARGV[0]\n";
+      $address = argton("192.168.1.1");
+   }
+
+   if ($opt_print_only_class) {
+      print getclass($address,1);
+      exit;
+   }
+  
+   # if deaggregate get last address
+   if ($opt_deaggregate) {
+      if (defined $ARGV[1]) {
+         $address2 = argton($ARGV[1],0);
+      }
+      if ($address2 == -1) {
+        $error .= "INVALID ADDRESS2: $ARGV[1]\n";
+        $address2 = argton("192.168.1.1");
+      }
+   }
+
+   if ($opt_deaggregate) {
+      if ($error) {
+         print "$error\n";
+      }
+      print "deaggregate ".ntoa($address) . " - " . ntoa($address2)."\n";
+      deaggregate($address,$address2);
+      exit;
+   }
+
+   # get netmasks
+   if (defined $ARGV[1]) {
+      $mask1   = argton($ARGV[1],1);
+   } else {
+      #get natural mask ***
+      $mask1 = argton(24);
+   }
+   if ($mask1   == -1) {
+      $error .= "INVALID MASK1:   $ARGV[1]\n";
+      $mask1   = argton(24);
+   }
+
+   if (defined $ARGV[2]) {
+      $mask2   = argton($ARGV[2],1);
+   } else {
+      $mask2 = $mask1;
+   }
+   if ($mask2   == -1) {
+      $error .= "INVALID MASK2:   $ARGV[2]\n";
+      $mask2   = argton(24);
+   }
+
+   if ($error) {
+      if ($opt_color) {
+         print set_color($error_color);
+      }
+      print "$error\n";
+   }
+
+#   print "Address: ".ntoa($address)."\n";
+#   print "mask1: ($mask1) ".ntoa($mask1)."\n";
+#   print "mask2: ($mask2) ".ntoa($mask2)."\n";
+   
+   html('<table border="0" cellspacing="0" cellpadding="0">');
+   html("\n");
+   printline ("Address",   $address ,$mask1,$mask1,1);
+   printline ("Netmask",   $mask1   ,$mask1,$mask1);
+   printline ("Wildcard", ~$mask1   ,$mask1,$mask1);
+   html("<tr>\n");
+   html('<td colspan="3"><tt>');
+   print "=>";
+   html("</tt></td>\n");
+   html("</tr>\n");
+   print "\n";
+   
+   $network = $address & $mask1;
+   printnet($network,$mask1,$mask1);
+   html("</table>\n");
+   if ($opt_deaggregate) {
+      deaggregate();
+   }
+   if ($opt_split) {
+      split_network($network,$mask1,$mask2,@opt_split_sizes);
+      exit;
+   }
+   if ($mask1 < $mask2) {
+      print "Subnets after transition from /" . ntobitcountmask($mask1);
+      print " to /". ntobitcountmask($mask2) . "\n\n";
+      subnets($network,$mask1,$mask2);
+   }
+   if ($mask1 > $mask2) {
+      print "Supernet\n\n";
+      supernet($network,$mask1,$mask2);
+   }
+   if ($opt_html) {
+      print << 'EOF';
+    <p>
+      <a href="http://validator.w3.org/check/referer"><img border="0"
+          src="http://www.w3.org/Icons/valid-html401"
+          alt="Valid HTML 4.01!" height="31" width="88"></a>
+    </p>
+EOF
+   }
+   exit;
+
 }
 
-if ($print_only_class) {
-   print $class[getclass(dqtobin($host))];
-   exit 0;
-}
-
-if (defined ($arg[2])) {
-    $mask2 = $arg[2];
-    if (! ($mask2 = is_valid_netmask($mask2)) ) {
-	print "$mcolor Illegal value for second NETMASK ($arg[2])$ncolor\n";
-    }	
-} else {
-    $mask2 = $mask;
-} 
-
-print "\n";
-
-printline ("Address",   $host                      , (&dqtobin($host),$mask,$bcolor,0) );
-my $m  = cidrtobin($mask);
-#pack( "B*",("1" x $mask) . ("0" x (32 - $mask)) );
-
-print_netmask($m,$mask);
-print "=>\n";
-
-$h = dqtobin($host);
-
-my $n = $h & $m;
-
-
-
-&printnet($n,$mask);
-
-
-if ( $mask2 == $mask ) {
-    &end;
-}
-if ($mask2 > $mask) {
-    print "Subnets\n\n";
-    $mark_newbits = 1;
-    &subnets;
-} else {
-    print "Supernet\n\n";
-    &supernet;
-}
-
-&end;
+# ---------------------------------------------------------------------
 
 sub end {
- if ($print_html) {
-   print "\n</pre>\n";
+ if ($opt_html) {
+#   print "\n</pre>\n";
+print "<html>\n";
  }
  exit;
 }
 
 sub supernet {
-    $m  = cidrtobin($mask2);
-    ##pack( "B*",("1" x $mask2) . ("0" x (32 - $mask2)) );
-    $n = $h & $m;
-    print_netmask($m,$mask2);
+    my ($network,$mask1,$mask2) = @_;
+    $network = $network & $mask2;
+    printline ("Netmask",   $mask2   ,$mask2,$mask1,1);
+    printline ("Wildcard", ~$mask2   ,$mask2,$mask1);
     print "\n";
-    printnet($n,$mask2);
+    printnet($network,$mask2,$mask1);
 }
-
-sub subnetsREMOVED {
-    my $subnets = 0;
-    my @oldnet;
-    my $oldnet;
-    my $k;
-    my @nr;
-    my $nextnet;
-    my $l;
-
-
-    $m  = cidrtobin($mask2);
-    ##pack( "B*",("1" x $mask2) . ("0" x (32 - $mask2)) );
-    print_netmask($m,$mask2);
-    print "\n"; #*** ??
-    
-    @oldnet = split //,unpack("B*",$n);
-    for ($k = 0 ; $k < $mask ; $k++) {
-	$oldnet .= $oldnet[$k];
-    }
-    for ($k = 0 ; $k < ( 2 ** ($mask2 - $mask)) ; $k++) {
-	@nr = split //,unpack("b*",pack("L",$k));
-	$nextnet = $oldnet;
-	for ($l = 0; $l < ($mask2 - $mask) ; $l++) {
-	    $nextnet .= $nr[$mask2 - $mask - $l - 1] ;
-	}
-	$n = pack "B32",$nextnet;
-	&printnet($n,$mask2);
-	++$subnets;
-	if ($subnets >= 1000) {
-	    print "... stopped at 1000 subnets ...$break";
-	    last;
-	}
-    }
-
-    if ( ($subnets < 1000) && ($mask2 > $mask) ){
-	print "\nSubnets:   $qcolor$subnets $ncolor$break";
-	print $ncolor . "Hosts:     $sfont$qcolor" . ($allhosts * $subnets) . "$sfont$break";
-    }
-}
-
 
 sub subnets 
 {
+   my ($network,$mask1,$mask2) = @_;
    my $subnet=0;
-   $m  = cidrtobin($mask2);
-   print_netmask($m,$mask2);
+   my $bitcountmask1 = ntobitcountmask($mask1);
+   my $bitcountmask2 = ntobitcountmask($mask2);
+
+   html('<table border="0" cellspacing="0" cellpadding="0">');
+   html("\n");
+   printline ("Netmask",   $mask2   ,$mask2,$mask1,1);
+   printline ("Wildcard", ~$mask2   ,$mask2,$mask1);
+   html("</table>\n");
+
    print "\n";
   
-   for ($subnet=0; $subnet < 2**($mask2 - $mask); $subnet++)
+   for ($subnet=0; $subnet < (1 << ($bitcountmask2-$bitcountmask1)); $subnet++)
    {
-     my $net = inttobin((bintoint($n) | ($subnet << (32-$mask2))));
-     printnet($net,$mask2);
+     my $net = $network | ($subnet << (32-$bitcountmask2));
+     print " ". ($subnet+1) .".\n";
+     html('<table border="0" cellspacing="0" cellpadding="0">');
+     html("\n");
+     printnet($net,$mask2,$mask1);
+     html("</table>\n");
      if ($subnet >= 1000) {
         print "... stopped at 1000 subnets ...$break";
-	return;
+	last;
      }
    }
-   if ($mask2 > $mask) {
-      print "\nSubnets:   $qcolor$subnet $ncolor$break";
-      print "Hosts:     $qcolor" . ($allhosts * $subnet) . "$ncolor$break";
+   $subnet = (1 << ($bitcountmask2-$bitcountmask1));
+   my $hostn = ($network | ((~$mask2) & $thirtytwobits)) - $network - 1;
+   if ($hostn > -1) {
+      print "\nSubnets:   $quads_color$subnet";
+      html('</font>');
+      print "$norml_color$break";
+      html('</font>');
    }
+   if ($hostn < 1 ) {
+      $hostn = 1;
+   }
+   print "Hosts:     $quads_color" . ($hostn * $subnet);
+   html('</font>'); 
+   print "$norml_color$break";
+   html('</font>');
 }
 
-sub print_netmask {
-   my ($m,$mask2) = @_;
-   printline ("Netmask",        &bintodq($m) . " = $mask2", ($m,$mask2,$mcolor,0) );
-   printline ("Wildcard",       &bintodq(~$m)              , (~$m,$mask2,$bcolor,0) );
-}
 
 sub getclass {
-   my $n = $_[0];
+   my $network = shift;
+   my $numeric = shift;
    my $class = 1;
-   while (unpack("B$class",$n) !~ /0/) {
+#   print "n $network bit ". (1 << (32-$class)) . " & " . 
+   while (($network & (1 << (32-$class))) == (1 << (32-$class)) ) {
       $class++;
       if ($class > 5) {
-	 last;
+	 return "invalid";
       }
-   } 
-   return $class;
+   }
+   if ($numeric) {
+      return $class[$class]; 
+   } else {
+      return chr($class+64);
+   }
 }
 
 sub printnet {
-    my ($n,$mask) = @_;
-    my $nm;
-    my $type;
+    my ($network,$mask1,$mask2) = @_;
     my $hmin;
     my $hmax; 
     my $hostn;
-    my $p;
-    my $i;
+    my $mask;
 
+    my $broadcast = $network | ((~$mask1) & $thirtytwobits);
     
-    ## $m  = pack( "B*",("1" x $mask) . ("0" x (32 - $mask)) );
-    $nm = ~cidrtobin($mask);
-    ##pack( "B*",("0" x $mask) . ("1" x (32 - $mask)) );
+    $hmin  = $network + 1;
+    $hmax  = $broadcast - 1;
+    $hostn =  $hmax - $hmin + 1;
+    $mask  = ntobitcountmask($mask1);
+    if ($mask == 31) {
+       $hmax  = $broadcast;
+       $hmin  = $network;
+       $hostn = 2;
+    }
+    if ($mask == 32) {
+       $hostn = 1;
+    }
+    
 
-    $b = $n | $nm;
-    
-    #$type = 1;
-    #while (unpack("B$type",$n) !~ /0/) {
-    #	$type++;
+    #if ($hmax < $hmin) {
+    #   $hmax = $hmin;
+    #   $hostn = 1;
     #}
-    #if ($type > 5) {
-    #	$type = '';
+    
+
+    #private...
+    #$p = 0;
+    #for ($i=0; $i<3; $i++) {
+    #	if ( (&bintoint($hmax) <= $privmax[$i])  && 
+    #         (&bintoint($hmin) >= $privmin[$i]) ) {
+    #	    $p = $i +1;
+    #	    last;
+    #	}
+    #}
+    
+    #if ($p) {
+    #	$p = $private;
     #} else {
-    #	$type = "Class " . chr($type+64);
+    #	$p = '';
     #}
-    
-    $type = getclass($n);
-    if ($type > 5 ) {
-       $type = "Undefined Class";
+ 
+
+    if ($mask == 32) {
+       printline ("Hostroute", $network  ,$mask1,$mask2,1);
     } else {
-       $type = "Class " . chr($type+64);
+       printline ("Network",   $network  ,$mask1,$mask2,1);
+       printline ("HostMin",   $hmin     ,$mask1,$mask2); 
+       printline ("HostMax",   $hmax     ,$mask1,$mask2);
+       printline ("Broadcast", $broadcast,$mask1,$mask2) if $mask < 31;
     }
-    
-    $hmin  = pack("B*",("0"x31) . "1") | $n;
-    $hmax  = pack("B*",("0"x $mask) . ("1" x (31 - $mask)) . "0" ) | $n;
-    $hostn = (2 ** (32 - $mask)) -2  ;
-    
-    $hostn = 1 if $hostn == -1;
-    
+#    html("</table>\n");
 
-    $p = 0;
-    for ($i=0; $i<3; $i++) {
-	if ( (&bintoint($hmax) <= $privmax[$i])  && 
-             (&bintoint($hmin) >= $privmin[$i]) ) {
-	    $p = $i +1;
-	    last;
-	}
-    }
-    
-    if ($p) {
-	$p = $private;
+#    html('<table border="0" cellspacing="0" cellpadding="0">');
+#    html("\n");
+    html("<tr>\n");
+    html('<td valign="top"><tt>'); #label
+    print set_color($norml_color);
+    print "Hosts/Net: " ;
+    html("</font></tt></td>\n");
+    html('<td valign="top"><tt>');
+#    printf $norml_color . "Hosts/Net: </tt>$quads_color%-22s",$hostn;
+#    html("<td><tt>");   
+    print set_color($quads_color);
+    printf "%-22s",$hostn;
+#    printf "%-22s", (ntoa($address).$additional_info);
+    html("</font></tt></td>\n"); 
+    html("<td>"); #label
+    if ($opt_html) {
+#warn "HTML\n";
+       print wrap_html(30,get_description($network,$mask1));
     } else {
-	$p = '';
+       print get_description($network,$mask1);
     }
-
-
-    printline ("Network",   &bintodq($n) . "/$mask", ($n,$mask,$bcolor,1),  " ($ccolor" . $type. "$ncolor)" );
-    printline ("Broadcast", &bintodq($b)           , ($b,$mask,$bcolor,0) );
-    printline ("HostMin",   &bintodq($hmin)        , ($hmin,$mask,$bcolor,0) );
-    printline ("HostMax",   &bintodq($hmax)        , ($hmax,$mask,$bcolor,0) );
-    printf $ncolor . "Hosts/Net: $sfont$qcolor%-22s",$hostn;
-    print $sfont . $ncolor;
+    html("</font></td>\n");
+    html("</tr>\n");   
+    html("\n");
+    text("\n");
+    text("\n");
     
-    if ($p) {
-       print "$p";
-    }
+    ##printf "Class %s, ",getclass($network);
+    ##printf "%s",netblock($network,$mask1);
+#    my ($label,$address,$mask1,$mask2,$classbitcolor_on,$is_netmask) = @_;
+#    print $sfont . $norml_color;
    
-    print "$break$break\n";
-   
-    $allhosts = $hostn;
+#    print "$break\n";
+#   exit; 
+   return $hostn;
 }
 
-sub printline {
-   my ($label,$dq,$mask,$mask2,$color,$mark_classbit,$class) = @_;
-   $class = "" unless $class;
-   printf "$ncolor%-11s$sfont$qcolor","$label:";
-   printf "%-22s$sfont", "$dq";
-   if ($print_bits) 
-   {
-      print  formatbin($mask,$mask2,$color,$mark_classbit);
-      if ($class) {
-         print $class;
+sub get_description 
+{
+   my $network = shift;
+   my $mask    = shift;
+   my @description;
+   my $field;
+   # class
+   if ($opt_color || $opt_html) {
+      $field = set_color($class_color) . "Class " . getclass($network);
+      if ($opt_html) {
+         $field .= '</font>';
+      }
+      $field .= set_color($norml_color);
+      push @description, $field
+#      push @description, set_color($class_color) . "Class " . 
+#                         getclass($network) . set_color($norml_color);
+   } else {
+      push @description, "Class " . getclass($network);
+   }
+   # netblock
+   my ($netblock_txt,$netblock_url) = split ",",netblock($network,$mask);
+   if (defined $netblock_txt) {
+      if ($opt_html) {
+         $netblock_txt = '<a href="' . $netblock_url . '">' .
+                         $netblock_txt . '</a>';
+      }
+#warn "DESC: '$netblock_txt'";
+      push @description,$netblock_txt;
+   }
+   # /31
+   if (ntobitcountmask($mask) == 31) {
+      if ($opt_html) { 
+         push @description,"<a href=\"http://www.ietf.org/rfc/rfc3021.txt\">PtP Link</a>";
+      } else {
+         push @description,"PtP Link RFC 3021";
       }
    }
-   print $sfont . $break;
+#$rfc3021 = "<a href=\"http://www.ietf.org/rfc/rfc3021.txt\">Point-to-Point
+#Link</a>";
+   return join ", ",@description;
 }
 
-sub formatbin {
-    my ($bin,$actual_mask,$color,$mark_classbits) = @_;
-    my @dq;
-    my $dq;
-    my @dq2;
-    my $is_classbit = 1;
-    my $bit;
-    my $i;
-    my $j;
-    my $oldmask;
-    my $newmask;
+sub printline
+{
+   my ($label,$address,$mask1,$mask2,$html_fillup) = @_;
+   $mask1 = ntobitcountmask($mask1);
+   $mask2 = ntobitcountmask($mask2);
+   my $line = "";
+   my $bit;
+   my $newbitcolor_on = 0;
+   my $toggle_newbitcolor = 0;
+   my $bit_color;
+   my $additional_info = '';
+   my $classbitcolor_on;
+   my $second_field;
+   if ($label eq 'Netmask') {
+      $additional_info = " = $mask1";
+   }
+   if ($label eq 'Network') {
+      $classbitcolor_on = 1;
+      $additional_info = "/$mask1";
+   }
+   if ($label eq 'Hostroute' && $mask1 == 32) {
+      $classbitcolor_on = 1;
+   }
+   
+   html("<tr>\n");   
+   html("<td><tt>");   
+   #label
+   print set_color($norml_color);
+   if ($opt_html && $html_fillup) {
+      print "$label:";
+      print "&nbsp;" x (11 - length($label));
+   } else {
+      printf "%-11s","$label:";
+   }
+   html("</font></tt></td>\n"); 
+   #address
+   html("<td><tt>");   
+   print set_color($quads_color);
+   #printf "%s-22s",(ntoa($address).$additional_info);
 
-    if ($mask2 > $mask) {
-	$oldmask = $mask;
-	$newmask = $mask2;
-	
-    } else {
-	$oldmask = $mask2;
-	$newmask = $mask;
-    }
+   #printf "%s%-11s$sfont%s",set_color($norml_color),"$label:",set_color($quads_color);
+   $second_field = ntoa($address).$additional_info;
+   if ($opt_html && $html_fillup) {
+      print $second_field;
+      print "&nbsp;" x (21 - length($second_field));
+   } else {
+      printf "%-21s", (ntoa($address).$additional_info);
+   }
+   html("</font></tt></td>\n"); 
+   
+   
+   if ($opt_print_bits)
+   {
+      html("<td><tt>");
+      $bit_color = set_color($binry_color);
+      if ($label eq 'Netmask') {
+         $bit_color = set_color($mask_color);
+      }
+      
+      if ($classbitcolor_on) {
+         $line .= set_color($class_color);
+      } else {
+         $line .= set_color($bit_color);
+      }
+      for (my $i=1;$i<33;$i++)
+      {
+         $bit = 0;
+         if (($address & (1 << 32-$i)) == (1 << 32-$i)) {
+            $bit = 1;
+         }
+         $line .= $bit;
+         if ($classbitcolor_on && $bit == 0) {
+            $classbitcolor_on = 0;
+   	 if ($newbitcolor_on) {
+   	    $line .= set_color($subnt_color);
+   	 } else {
+   	    $line .= set_color($bit_color);
+   	 }
+         }
+#   print "$mask1 $i % 8 == " . (($i) % 8) . "\n";
+         if ($i % 8 == 0 && $i < 32) {
+            $line .= set_color($norml_color) . '.';
+	    $line .= set_color('oldcolor');
+         }
+         if ($i == $mask1) {
+            $line .= " "; 
+         }
+         if (($i == $mask1 || $i == $mask2) && $mask1 != $mask2) {
+            if ($newbitcolor_on) {
+               $newbitcolor_on = 0;
+               $line .= set_color($bit_color) if ! $classbitcolor_on;
+            } else {
+               $newbitcolor_on = 1;
+               $line .= set_color($subnt_color) if ! $classbitcolor_on;
+            }
+         }
+      }
+      $line .= set_color($norml_color);
+      print "$line";
+      html("</tt></font></td>\n"); 
+   }
+   html("</tr>\n");
+html("\n");
+text("\n");
+   #print $sfont . $break;
+}
+
+sub text
+{
+   my $str = shift;
+   if ($opt_text) {
+      print "$str";
+   }
+}
+
+sub html
+{
+   my $str = shift;
+   if ($opt_html) {
+      print "$str";
+   }
+}
+
+sub set_color
+{
+   my $new_color = shift;
+   my $return;
+   if ($new_color eq $color_old) {
+#      print "SETCOLOR saved one dupe\n";
+   #   $return = 'x';
+   $return = '';
+   }
+   if ($new_color eq 'oldcolor') {
+      $new_color = $color_old;
+   }
+   $color_old = $color_actual;
+   #$return .= "$color_actual" . "old";
+   $color_actual = $new_color;
+   #return $new_color;
+   $return .= $new_color;
+   return $return;
+}
+
+sub split_network
+{
+   my $network = shift;
+   my $mask1   = shift;
+   my $mask2   = shift;
+   my @sizes = @_;
+   
+   my $first_address = $network;
+   my $broadcast = $network | ((~$mask1) & $thirtytwobits);
+   my @network;
+   my $i=0;
+   my @net;
+   my @mask;
+   my $needed_addresses = 0;
+   my $needed_size;
+   foreach (@sizes) {
+      $needed_size = round2powerof2($_+2);
+#      printf "%3d -> %3d -> %3d\n",$_,$_+2,$needed_size;
+      push @network , $needed_size .":".$i++;
+      $needed_addresses += $needed_size;
+   }
+   @network = sort { ($b =~ /(.+):/)[0] <=> ($a =~ /(.+):/)[0] } @network;
+   foreach (@network) {
+      my ($size,$nr) = split ":",$_;
+      $net[$nr]=  $network;
+      $mask[$nr]= (32-log($size)/log(2));
+      $network += $size;
+   }
+   $i = -1;
+   while ($i++ < $#sizes) {   
+      printf "%d. Requested size: %d hosts\n", $i+1,$sizes[$i];
+      ###$mask  = $mask[$i];
+      #$mark_newbits = 1;
+      ###print_netmask(bitcountmasktobin($mask[$i]),$mask);
+      printline("Netmask",bitcountmaskton($mask[$i]),bitcountmaskton($mask[$i]),$mask2);
+      printnet($net[$i],bitcountmaskton($mask[$i]),$mask2);
+   }
+
+   my $used_mask = 32-log(round2powerof2($needed_addresses))/log(2);
+   if ($used_mask < ntobitcountmask($mask1)) {
+      print "Network is too small\n";
+   }
+   print "Needed size:  ". $needed_addresses . " addresses.\n";
+   print "Used network: ". ntoa($first_address) ."/$used_mask\n";
+   print "Unused:\n";
+   deaggregate($network,$broadcast);
+   
+}
+
+sub round2powerof2 {
+  my $i=0;
+  while ($_[0] > ( 1 << $i)) {
+     $i++;
+  }
+  return 1 << $i;
+}
+
+# Deaggregate address range
+# expects: range: (dotted quads)start (dotted quads)end
+
+sub deaggregate 
+{
+  my $start = shift;
+  my $end   = shift;
+  my $base = $start;
+  my $step;
+  while ($base <= $end)
+  {
+       $step = 0;
+       while (($base | (1 << $step))  != $base) {
+          if (($base | (((~0) & $thirtytwobits) >> (31-$step))) > $end) {
+	     last;
+	  }
+          $step++;
+       }
+       print ntoa($base)."/" .(32-$step);
+       print "\n";
+       $base += 1 << $step;
+  }
+}
+
+sub getopts 
+   # expects nothing
+   # returns @ARGV without options
+   # sets global opt variables
+   
+   # -h --html 
+   # -h without further opts -> help 
+   #    (workaround: can't change meaning of -h since this would
+   #     break old cgi_wrapper scripts)
+   # --help 
+   # -n --nocolor
+   # -v --version
+   # -c --class print natural class
+   # -s --split
+   # -b --nobinary
+   # -d --deaggregate  
+{  
+   my @arguments;
+   my $arg;
+   my $prefix;
+   my $nr_opts = 0;
+   my @tmp;
+   
+   # opt_color defaults to 1 when connected to a terminal
+   if (-t STDOUT) {
+      $opt_color = 1;
+   }
+   
+   while (has_opts()) {
+     $arg = shift @ARGV;
+     if ($arg =~ /^--(.+)/) {
+         $nr_opts += read_opt('--',$1);
+     }
+     elsif ($arg =~ /^-(.+)/) {
+	 $nr_opts += read_opt('-',split //,$1);
+     } 
+     else {
+        push @tmp, $arg;
+     }
+   }
+
+#   foreach (@arguments) {
+#      print "arg: $_\n";
+#   }
+
+   foreach (@ARGV) {
+      push @tmp,$_;
+   }
+   # extract base address and netmasks and ranges
+   foreach (@tmp) {
+      if (/^(.+?)\/(.+)$/) {
+         push @arguments,$1;
+         push @arguments,$2;
+      }
+      elsif (/^(.+)\/$/) {
+         push @arguments,$1;
+      }
+      elsif (/^(.+)\-(.+)$/) {
+         push @arguments,$1;
+         push @arguments,$2;
+         $opt_deaggregate = 1;
+      }
+      elsif (/^\-$/) {
+         $opt_deaggregate = 1;
+      }
+      else {
+         push @arguments, $_;
+      }
+   }
+   if ($#arguments == 2 && $arguments[1] eq '-') {
+      @arguments = ($arguments[0],$arguments[2]);
+      $opt_deaggregate = 1;
+   }
+   
+   
+   # workaround for -h 
+   if ($opt_html && $nr_opts == 1 && $#arguments == -1) {
+      $opt_help = 1;
+   }
+ 
+
+   if ($error) {
+      print "$error";
+      exit;
+   }
+   return @arguments;
+
+   sub read_opt {
+     my $prefix = shift;
+     my $opts_read = 0;
+     foreach my $opt (@_) 
+     {
+        ++$opts_read;
+        if    ($opt eq 'h' || $opt eq 'html') {
+	   $opt_html = 1;
+           $opt_text = 0;
+	}
+        elsif    ($opt eq 'help') {
+	   $opt_help = 1;
+	}
+	elsif ($opt eq 'n' || $opt eq 'nocolor') {
+	   $opt_color = 0;
+	}
+	elsif ($opt eq 'v' || $opt eq 'version') {
+	   $opt_version = 1;
+	}
+	elsif ($opt eq 'b' || $opt eq 'nobinary') {
+	   $opt_print_bits = 0;
+	}
+	elsif ($opt eq 'c' || $opt eq 'class') {
+	   $opt_print_only_class =  1;
+	}
+	elsif ($opt eq 'r' || $opt eq 'range') {
+           $opt_deaggregate =  1;
+        }
+	elsif ($opt eq 's' || $opt eq 'split') {
+	   $opt_split = 1;
+	   while (defined $ARGV[0] && $ARGV[0] =~ /^\d+$/) {
+	      push @opt_split_sizes, shift @ARGV;
+	   }
+	   if ($#opt_split_sizes < 0) {
+	      $error .= "Argument for ". $prefix . $opt . " is missing or invalid \n";
+	   }
+	}
+	else {
+	   $error .= "Unknown option: " . $prefix . $opt . "\n";
+	   --$opts_read;
+	}
+     }
+     return $opts_read;
+   }
+
+   sub has_opts {
+      foreach (@ARGV) {
+         return 1 if /^-/;
+      }
+      return 0;
+   }
+}
 
 
+# expects int width
+#         string  
+# returns wrapped string
+sub wrap_html
+{ 
+   my $width = shift;
+   my $str   = shift;
+#warn "WRAP: '$str'\n";
+   my @str = split //,$str;
+   my $result;
+   my $current_pos = 0;
+   my $start = 0;
+   my $last_pos = 0;
+   my $line;
+   while ($current_pos < $#str) 
+   {
+#warn "$current_pos\n";
+#warn "$current_pos: $str[$current_pos]\n";
+      # find next blank
+      while ($current_pos < $#str && $str[$current_pos] ne ' ') {
+         # ignore tags
+         if ($str[$current_pos] eq '<') {
+            $current_pos++;
+            while ($str[$current_pos] ne '>') {
+               $current_pos++;
+            }
+         }
+         $current_pos++;
+      }
+      # fits in one line?...
+      $line = substr($str,$start,$current_pos-$start);
+      $line =~ s/<.+?>//g;
+      if ( length($line) <= $width) {
+	 # ... yes. keep position in mind and try next
+         $last_pos = $current_pos;
+         $current_pos++;
+         next;
+      } else {
+         # ...no. wrap at last position (if there was one,
+         # otherwise wrap here)
+         if ($last_pos ne $start) {
+            $current_pos = $last_pos;
+         }
+         $line = substr($str,$start,$current_pos-$start);
+         $current_pos++;
+         $start = $current_pos;
+         $last_pos = $start;
+         # no output if end of string is reached because
+         # rest of string is treated after this block
+         if ($current_pos < $#str) {
+#warn "RESULT+ '$line'\n";
+            $result .= "$line<br>";
+         }
+         
+      }  
+   }
+   $line = substr($str,$start,$current_pos-$start);
+   $result .= "$line";
+#warn "'return RESULT $result'\n";
+   return $result;
+}
 
-    @dq = split //,unpack("B*",$bin);
-    if ($mark_classbits) {
-	$dq = $ccolor;
-    }	else {
-	$dq = $color;
-    }
-    for ($j = 0; $j < 4 ; $j++) {
-	for ($i = 0; $i < 8; $i++) {
-	    if (! defined ($bit = $dq[$i+($j*8)]) ) {
-		$bit = '0';
+
+# gets network address as dq
+# returns string description,string url
+sub netblock 
+{
+   my ($mynetwork_start,$mymask) = @_;
+   my $mynetwork_end = $mynetwork_start | ((~$mymask) & $thirtytwobits);
+   my %netblocks = ( "192.168.0.0/16" => "Private Internet,http://www.ietf.org/rfc/rfc1918.txt",
+                     "172.16.0.0/12"  => "Private Internet,http://www.ietf.org/rfc/rfc1918.txt",
+                     "10.0.0.0/8"     => "Private Internet,http://www.ietf.org/rfc/rfc1918.txt",
+                     "169.254.0.0/16" => "APIPA,http://www.ietf.org/rfc/rfc3330.txt",
+		     "127.0.0.0/8"    => "Loopback,http://www.ietf.org/rfc/rfc1700.txt",
+		     "224.0.0.0/4"    => "Multicast,http://www.ietf.org/rfc/rfc3171.txt"
+                   );
+   my $match = 0;
+   #
+   foreach (keys %netblocks) {
+      my ($network,$mask) = split "/",$_;
+      my $start = argton($network);
+      my $end   = $start + (1 << (32-$mask)) -1;
+      # mynetwork starts within block
+      if ($mynetwork_start >= $start && $mynetwork_start <= $end) {
+         $match++;
+      }
+      # mynetwork ends within block
+      if ($mynetwork_end >= $start && $mynetwork_end <= $end) {
+         $match++;
+      }
+      # block is part of mynetwork
+      if ($start > $mynetwork_start && $end < $mynetwork_end) {
+         $match = 1;
+      }
+      if ($match == 1) {
+         return "In Part ".$netblocks{$_};
+      }
+      if ($match == 2) {
+         return $netblocks{$_};
+      }
+   }
+   return "";
+}
+
+# ------- converter ---------------------------------------------
+
+sub bitcountmaskton 
+{
+   my $bitcountmask = shift;
+   my $n;
+   for (my $i=0;$i<$bitcountmask;$i++) {
+      $n |= 1 << (31-$i);
+   }
+   return $n;
+}
+
+sub argton
+# expects 1. an address as dotted decimals, bit-count-mask, or hex
+#         2. netmask flag. if set -> check netmask and negate wildcard
+#            masks
+# returns integer or -1 if invalid
+{
+   my $arg          = shift;
+   my $netmask_flag = shift;
+   
+   my $i = 24;
+   my $n = 0;
+   
+   # dotted decimals
+   if    ($arg =~ /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/) {
+      my @decimals = ($1,$2,$3,$4);
+      foreach (@decimals) {
+         if ($_ > 255 || $_ < 0) {
+	    return -1;
+	 }
+	 $n += $_ << $i;
+	 $i -= 8;
+      }
+      if ($netmask_flag) {
+         return validate_netmask($n);
+      }
+      return $n;
+   }
+   
+   # bit-count-mask (24 or /24)
+   $arg =~ s/^\/(\d+)$/$1/;
+   if ($arg =~ /^\d{1,2}$/) {
+      if ($arg < 1 || $arg > 32) {
+         return -1;
+      }
+      for ($i=0;$i<$arg;$i++) {
+         $n |= 1 << (31-$i);
+      }
+      return $n;
+   }
+   
+   # hex
+   if ($arg =~   /^[0-9A-Fa-f]{8}$/ || 
+       $arg =~ /^0x[0-9A-Fa-f]{8}$/  ) {
+      if ($netmask_flag) {
+         return validate_netmask(hex($arg));
+      }
+      return hex($arg);
+   }
+
+   # invalid
+   return -1;
+   
+   sub validate_netmask
+   {
+      my $mask = shift;
+      my $saw_zero = 0;
+      # negate wildcard
+      if (($mask & (1 << 31)) == 0) {
+      print "WILDCARD\n";
+         $mask = ~$mask;
+      }
+      # find ones following zeros 
+      for (my $i=0;$i<32;$i++) {
+         if (($mask & (1 << (31-$i))) == 0) {
+            $saw_zero = 1;
+         } else {
+            if ($saw_zero) {
+      print "INVALID NETMASK\n";
+               return -1;
 	    }
-
-	    if ( $mark_newbits &&((($j*8) + $i + 1) == ($oldmask + 1)) ) {
-		$dq .= "$dcolor";
-	    }
-
-
-	    $dq .= $bit;
-	    if ( ($mark_classbits && 
-		  $is_classbit && $bit == 0)) {
-		$dq .= $color;
-		$is_classbit = 0;
-	    }
-	    
-	    if ( (($j*8) + $i + 1) == $actual_mask ) {
-		$dq .= " ";
-	    }
-
-	    if ( $mark_newbits &&((($j*8) + $i + 1) == $newmask) ) {
-		$dq .= "$color";
-	    }
-
-	}
-	push @dq2, $dq;
-	$dq = '';
-    }
-    return (join ".",@dq2);
+         }
+      }
+      return $mask;
+   }
 }
 
-sub dqtobin {
-        my @dq;
-	my $q;
-	my $i;
-	my $bin;
-
-	foreach $q (split /\./,$_[0]) {
-		push @dq,$q;
-	}
-	for ($i = 0; $i < 4 ; $i++) {
-		if (! defined $dq[$i]) {
-			push @dq,0;
-		}
-	}
-	$bin    = pack("CCCC",@dq);      # 4 unsigned chars
-	return $bin;
+sub ntoa 
+{
+   return join ".",unpack("CCCC",pack("N",shift));
 }
 
-sub bintodq {
-	my $dq = join ".",unpack("CCCC",$_[0]);
-print 
-	return $dq;
+sub ntobitcountmask
+# expects integer
+# returns bitcountmask
+{
+   my $mask = shift;
+   my $bitcountmask = 0;
+   # find first zero
+   while ( ($mask & (1 << (31-$bitcountmask))) != 0 ) {
+      if ($bitcountmask > 31) {
+         last;
+      }
+      $bitcountmask++;
+   }
+   return $bitcountmask;
 }
 
-sub inttobin {
-        return pack("N",$_[0]);
-}
-
-sub bintoint {
-	return unpack("N",$_[0]);
-}
-
-
-sub is_valid_dq {
-	my $value = $_[0];
-	my $test = $value;
- 	my $i;
-	my $corrected;
-	$test =~ s/\.//g;
-	if ($test !~ /^\d+$/) {
-		return 0;
-	}
-	my @value = split /\./, $value, 4;
-	for ($i = 0; $i<4; $i++) {
-		if (! defined ($value[$i]) ) {
-			$value[$i] = 0;
-		}
-		if ( ($value[$i] !~ /^\d+$/) ||
-		     ($value[$i] < 0) || 
-                     ($value[$i] > 255) ) 
-                {
-			return 0;
-		}
-	}
-	$corrected = join ".", @value;
-	return $corrected;
-}
-
-sub is_valid_netmask {
-	my $mask = $_[0];
-	if ($mask =~ /^\d+$/) {
-		if ( ($mask > 32) || ($mask < 1) ) {
-			return 0;
-		}
-	} else {
-		if (! ($mask = &is_valid_dq($mask)) ) {
-			return 0;
-		}
-		$mask = dqtocidr($mask);
-	}
-	return $mask;
-
-}
-
-
-sub cidrtobin {
-   my $cidr = $_[0];
-   pack( "B*",(1 x $cidr) . (0 x (32 - $cidr)) );
-}
-
-sub dqtocidr {
-	my $dq = $_[0];
-	$b = &dqtobin($dq);
-	my $cidr = 1;
-	my $firstbit = unpack("B1",$b) ^ 1;
-	while (unpack("B$cidr",$b) !~ /$firstbit/) {
-		$cidr++;
-		last if ($cidr == 33);
-	}
-	$cidr--;
-	#print "CIDR: $cidr\n";
-	#print "DQ:  $dq\n";
-	my $m = cidrtobin($cidr);
-	#print "NM:  " . bintodq($m) . "\n";
-	#print "NM2: " . bintodq(~$m) . "\n";
-	if (bintodq($m) ne $dq && bintodq(~$m) ne $dq) {
- 	   print "$mcolor Corrected illegal netmask: $dq" . "$ncolor\n";
-	}
-	return $cidr;
-	
-}
+# ------- documentation ----------------------------------------
 
 sub usage {
     print << "EOF";
-Usage: ipcalc [-n|-h|-v|-help] <ADDRESS>[[/]<NETMASK>] [NETMASK]
+Usage: ipcalc [options] <ADDRESS>[[/]<NETMASK>] [NETMASK]
 
 ipcalc takes an IP address and netmask and calculates the resulting broadcast, 
 network, Cisco wildcard mask, and host range. By giving a second netmask, you 
 can design sub- and supernetworks. It is also intended to be a teaching tool 
 and presents the results as easy-to-understand binary values. 
 
- 
- -n    Don't display ANSI color codes
- -b    Suppress the bitwise output
- -c    Just print bit-count-mask of given address
- -h    Display results as HTML
- -help Longer help text
- -v    Print Version
+ -n --nocolor  Don't display ANSI color codes.
+ -b --nobinary Suppress the bitwise output.
+ -c --class    Just print bit-count-mask of given address.
+ -h --html     Display results as HTML (not finished in this version).
+ -v --version  Print Version.
+ -s --split n1 n2 n3
+               Split into networks of size n1, n2, n3.
+ -r --range    Deaggregate address range.
+    --help     Longer help text.
  
 Examples:
 
@@ -574,6 +1063,16 @@ ipcalc 192.168.0.1/255.255.128.0
 ipcalc 192.168.0.1 255.255.128.0 255.255.192.0
 ipcalc 192.168.0.1 0.0.63.255
 
+
+ipcalc <ADDRESS1> - <ADDRESS2>  deaggregate address range
+
+ipcalc <ADDRESS>/<NETMASK> --s a b c
+                                split network to subnets
+				where a b c fits in.
+
+! New HTML support not yet finished.
+
+ipcalc $version
 EOF
 }
 
@@ -611,16 +1110,21 @@ http://jodies.de/ipcalc
 
 Thanks for your nice ideas and help to make this tool more useful: 
 
-Hermann J. Beckers   hj.beckers(a)kreis-steinfurt.de
-Kevin Ivory          ki(a)sernet.de
-Frank Quotschalla    gutschy(a)netzwerkinfo.de
-Sven Anderson        sven(a)anderson.de
-Scott Davis          sdavis(a)austin-texas.net
-Denis A. Hainsworth  denis(a)ans.net
-Steve Kent           stevek(a)onshore.com
-Igor Zozulya         izozulya(a)yahoo.com
+Bartosz Fenski
+Denis A. Hainsworth
+Foxfair Hu
+Frank Quotschalla
+Hermann J. Beckers
+Igor Zozulya
+Kevin Ivory
+Lars Mueller
+Lutz Pressler
+Oliver Seufer
+Scott Davis
+Steve Kent
+Sven Anderson
+Torgen Foertsch
 
-    
 EOF
 usage();
 exit;

