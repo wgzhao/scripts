@@ -46,7 +46,7 @@ function get_sub_directory($dir) //get the subdirectories of current directory
 	<link href="file.css" rel="stylesheet" type="text/css">
 	</head>
 	<body>
-	<table border="1" width="250" cellspacing="1" cellpadding="1">
+	<!--<table border="1" width="250" cellspacing="1" cellpadding="1">
 	  <tr>
 		<td class="t11" height="7" colspan="3">文件管理登陆</td>
 	  </tr>
@@ -61,7 +61,7 @@ function get_sub_directory($dir) //get the subdirectories of current directory
 			 <td><input type="submit" name="pass" value="登陆"></td>
 		</form>
 	  </tr>
-	</table>
+	</table>-->
 	</body>
 	</html>
 <?php
@@ -106,19 +106,20 @@ $dir=$_REQUEST["dir"];
 <?php
 echo "<a href='?dir=".$dir."' >".$dir."</a>";
 ?>
-</td>
+<!--</td>
 <td align="right"><a href="?tools=shell_cmd" target="_blank">shell命令 </a></td>
 </tr>
 </table>
 </body>
-</html>
+</html>-->
 <?php
 //use varity functions according to the passing arguments
 //user shell command
-if ($_REQUEST["tools"]=="shell_cmd") //if the user use phpshell
-{
-?>
-	<html>
+//if ($_REQUEST["tools"]=="shell_cmd") //if the user use phpshell
+//{
+//?>
+
+<!--<html>
 	<head><title>PHP文件管理 V1.2</title>
 	<meta http-equiv="content-type" content="text/html; charset=gb2312">
 	</head>
@@ -133,15 +134,17 @@ if ($_REQUEST["tools"]=="shell_cmd") //if the user use phpshell
 	</td></tr>
 	<tr><td class="t12">
 	<textarea cols="93" rows="22" readonly name="textarea">
+-->
 	<?php
-	if (!empty($_POST["command"])) {
-	  system($_POST["command"]);
-	}
+	//if (!empty($_POST["command"])) {
+	//  system($_POST["command"]);
+	//}
 	?>
-	</textarea>
-	</td></tr></form></table>
+	<!--</textarea>
+	</td></tr></form></table>-->
+	
 <?php
-} //ending the  phpshell
+//} //ending the  phpshell
 ?>
 <?php
 //处理文件上传
@@ -189,51 +192,9 @@ if ($_REQUEST["editfile"]=="" )
 <table border="1">
 <tr>
 <tr>
-<td rowspan="21">文件上传</td>
+<td rowspan="6">文件上传</td>
 </tr>
 <input type="hidden" name="MAX_FILE_SIZE" value="3000000">
-<tr>
-<td><input type="file" name="file_name[]" /></td>
-</tr>
-<tr>
-<td><input type="file" name="file_name[]" /></td>
-</tr>
-<tr>
-<td><input type="file" name="file_name[]" /></td>
-</tr>
-<tr>
-<td><input type="file" name="file_name[]" /></td>
-</tr>
-<tr>
-<td><input type="file" name="file_name[]" /></td>
-</tr>
-<tr>
-<td><input type="file" name="file_name[]" /></td>
-</tr>
-<tr>
-<td><input type="file" name="file_name[]" /></td>
-</tr>
-<tr>
-<td><input type="file" name="file_name[]" /></td>
-</tr>
-<tr>
-<td><input type="file" name="file_name[]" /></td>
-</tr>
-<tr>
-<td><input type="file" name="file_name[]" /></td>
-</tr>
-<tr>
-<td><input type="file" name="file_name[]" /></td>
-</tr>
-<tr>
-<td><input type="file" name="file_name[]" /></td>
-</tr>
-<tr>
-<td><input type="file" name="file_name[]" /></td>
-</tr>
-<tr>
-<td><input type="file" name="file_name[]" /></td>
-</tr>
 <tr>
 <td><input type="file" name="file_name[]" /></td>
 </tr>

@@ -161,3 +161,7 @@ def ex18_8():
         t.join()
         
     print 'all DONE at:',ctime(time())
+
+
+if __name__ == "__main__":
+    ex18_8()

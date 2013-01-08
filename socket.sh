@@ -1,2 +1,4 @@
 #!/bin/bash
-ssh -D7070 -qnTfN upload@hk-server
+host=${1:-"blog.wgzhao.com"}
+echo "connect host:$host"
+ssh -D7070 -nTfN upload@${host}
