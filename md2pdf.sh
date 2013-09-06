@@ -6,7 +6,12 @@ if [ $# -lt 1 ];then
 		exit 65
 fi
 VERSION=`$PANDOC  -v |head -n1 |awk '{print $2}'`
-templatefile=/usr/share/pandoc-$VERSION/templates/default.latex
+ver=$(echo "$VERSION" | tr -d '.' )
+if [ $ver -gt 1000 ];then
+	templatefile=default.latex
+else
+	templatefile=/usr/share/pandoc-$VERSION/templates/default.latex
+fi
 
 $PANDOC -f markdown -t latex --template=$templatefile -o $$.tex $1 
 
