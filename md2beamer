@@ -1,0 +1,9 @@
+#!/bin/bash
+#convert markdown to beamer presentation with pdf format
+if [ $# -lt 1 ];then
+  echo "$0 <markdown file>"
+  exit 65
+fi
+filename=$(basename $1)
+pandoc -N -t beamer --slide-level=2 --template=default.beamer --variable fontsize=10pt --variable version=1.10 --latex-engine=xelatex --toc -o ${filename%\.[a-zA-Z]*}.pdf $2 
+
