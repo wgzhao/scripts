@@ -7,8 +7,18 @@ if [ $# -lt 1 ];then
 	ssh weiguo@${bj}
 fi
 if [ $# -ge 1 ];then
+	if [ "$1" != "tj" -a "$1" != "bj" ];then
+		echo "the first argument must be tj or bj"
+		exit 65
+	fi
+	
 	cmd="ssh -t weiguo@${!1}"
 	if [ -n $2 ];then
+		## $2 must be two digital
+		if [[ $2 == *[!0-9]* ]];then
+			echo "the second argumen must be digital string"
+			exit 65
+		fi
 		cmd="${cmd} /home/weiguo/bin/g $2"
 	fi
 	eval $cmd
