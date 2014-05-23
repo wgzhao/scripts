@@ -1,28 +1,30 @@
 #!/usr/bin/env python
+# -*- coding:utf8 -*-
+#encoding:utf8
 ##
 '''
 get all links from file or stdin or url
 '''
 
 import urllib2
-from sys import argv,exit,stdin
+import sys
 import os
-
+reload(sys)
+sys.setdefaultencoding('utf-8')
 try:
     from BeautifulSoup import BeautifulSoup as bs
 except ImportError:
     print "Install BeautifulSoup first"
-    exit(2)
+    sys.exit(2)
     
 def get_content():
-    if len(argv) < 2:
-        return '\n'.join(stdin.readlines())
+    if len(sys.argv) < 2:
+        return '\n'.join(sys.stdin.readlines())
         
-    if os.path.exists(argv[1]):
-        print "argument is a file"
-        return open(argv[1]).read()
+    if os.path.exists(sys.argv[1]):
+        return open(sys.argv[1]).read()
      
-    return urllib2.urlopen(argv[1]).read()
+    return urllib2.urlopen(sys.argv[1]).read()
     
     
     

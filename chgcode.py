@@ -20,6 +20,8 @@ def usage():
     
 def chcode(dir,encodinf='utf-8'):
     for f in os.listdir(dir):
+        if os.path.isdir(f):
+            chcode("%s/%s" % (dir,f),encodinf)
         charset = chardet.detect(f)['encoding']
         print charset
         fname = unicode(f,charset)
