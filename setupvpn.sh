@@ -1,6 +1,6 @@
 #!/bin/bash
 # auto setup pptp vpn 
-# only test in linode vps
+# only test in Debian 7.5 under linode vps
 # author: wgzhao <wgzhao@gmail.com>
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 export LANG=en_US.UTF-8
