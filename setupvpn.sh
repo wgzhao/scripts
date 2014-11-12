@@ -107,11 +107,10 @@ if [ "$ostype" = "Redhat" ];then
 else
 	#save to a script
 	echo "#!/bin/sh
-	IPT='/sbin/iptables'
-
-	$IPT -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-	$IPT -o eth0 -A FORWARD -p tcp --tcp-flags SYN,RST SYN -m tcpmss --mss 800:1536 -j TCPMSS --clamp-mss-to-pmtu
-	" > /etc/network/if-up.d/pptp.sh
+IPT=/sbin/iptables
+\$IPT -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+\$IPT -o eth0 -A FORWARD -p tcp --tcp-flags SYN,RST SYN -m tcpmss --mss 800:1536 -j TCPMSS --clamp-mss-to-pmtu
+" > /etc/network/if-up.d/pptp.sh
 	chmod +x /etc/network/if-up.d/pptp.sh
 	#execute it
 	/etc/network/if-up.d/pptp.sh
