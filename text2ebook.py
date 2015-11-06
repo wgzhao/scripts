@@ -25,7 +25,10 @@ def create_ebook(args):
     if args.author:
         author = args.author
     else:
-        author = lines[1].replace('作者：','').strip()
+        try:
+            author = lines[1].replace('作者：','').strip()
+        except IndexError:
+            author = ''
     
     if args.title:
         title = args.title
