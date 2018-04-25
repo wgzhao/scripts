@@ -1,0 +1,1079 @@
+1. 对于一个概念，要有引入其概念的理由（召回），还要有判定其概念的证据（准确）。
+这个可以类比于引入概念模板，然后对概念模板进行填充。
+不同的是，这里可能会否定概念模板的存在性。 -------否定？
+
+比如，凡是涉及动作，就要引入时间概念。
+不过，具体的时间在该动作中是怎么表现的，则需要进行匹配和判定。
+
+对于菜谱，步骤之间可能存在依赖关系，在于前一步的结果是后一步的输入。
+
+
+2. 将虾剪去虾须，留头、尾，去皮，从背部剖开，腹部相连，去除沙线，洗净，平放在盘中或案板上，撒上盐，料酒腌制5分钟。
+怎么识别“沙线”是虾的一部分。
+首先，因为其位于“去”的后面，应该是部位名。
+然后，“虾”是食材名。
+那么，又怎么识别“虾”的后面通常是部位名这个规则呢。
+
+3. 引入新概念时，因为其具体含义不明朗，可以先只引入名称，并备注“有待扩展”。
+
+
+4. “择洗”，“备齐”这样的词汇，每个字本身都是有含义的。
+作为动词，每个字的意思关键在于选取动词含义。所谓动词含义，就是测试操作对象，操作效果。
+
+“择”的对象和“洗”的对象相同。不过，“洗”要用“水”，而择是用“手”。而且，水会沾在食材上。
+“择”和“洗”是并列的。
+“齐”则是“备”的效果。
+
+基本要素要人工引入。
+
+基本要素的组合可以由机器按照规则进行组合。
+
+5. 
+832090	8	这是我滤出来的冬瓜渣，用来包面包了
+“这是”表示图文关系。
+这样一种关系在电脑里面要怎么表示，可以用来做什么推导。
+得定义一个描述概念空间中的文本。插图与描述文字共存在这个文本中，它们存在依存关系。
+
+6. 自动模板生成。
+要能够对元素选择合适的泛化形式，以便进行模板匹配或者生成。
+
+可以先把这个任务实现。
+
+在任务实现的过程中，也可以采取宽度+深度搜索的多任务并行模式。
+
+
+7. 
+ 怎么让系统能够自己提问呢。
+这需要在很多地方提供多种选择。
+系统提问：该选A还是B。最重要的是要让系统知道有两种合理的选择。
+[系统提问是一个概念召回问题。召回的方式有多种。
+系统寻找问题的答案是一个概念判定问题。]
+
+8. 模板生成和匹配系统：
+（1）模板匹配系统，猜测某个词语属于某个模板。先进行上下文判定，确定模板匹配的概率。
+内嵌模板上下文判定分类器。
+（2）要对模板内部元素之间的约束关系进行推导。
+（3）词语到类名的映射，本身可以看成一种模板的归类。
+（4）对于词语归类相对比较容易，对模板进行归类则更为复杂。对于词语进行归类是一种最简单的模板归类，词语是最简单的模板。
+（5）一些常见的归类手段：中心实体一致，都是对中心实体的操作。多个加工和一个加工一样，都是加工。
+对同一个概念的侧面进行展开，或者多样性表述，这个是归类的基点，也是模板生成（生成匹配多样化情形的模板）的基点。
+两个要素在描述时相对位置的变化。有时候紧挨，有时候隔离，有时候交换相对位置。
+概念的展开。
+确定一个模板中的核心概念词汇。这个词汇与上下文会建立更密切的联系。
+不过上下文之间的关系是并列关系时，这时候貌似中心词汇就不重要。
+这时候，中心概念没有在单个句子里面直接出现。
+
+为什么要归结出中心概念，其原因是为了与上下文组合成更大的概念。
+其实，没有中心概念，而去分析本模板内的要素与上下文的关系，也可以分析出怎么跟上下文组合更大的概念。
+
+（6）当一个模板的上下文足够多时，可能对于其内部解析的依赖就很小了。因为其内涵已经由外部的上下文充分地反映了。
+（7）有n种角色。而且会引入越来越多的角色。
+（8）先做一个广度和深度结合搜索的模板生成和匹配算法吧。
+所有算法都归结到一个类似的搜索算法。
+【当然，这个搜索本身也允许扩展版。搜索算法本身也要可以被检索。】
+在模板生成中的体现，跨距离约束，多要素联合，两者要同步展开。在将二元相邻模板扩展到三元相邻模板的同时，要扩展到二元跨距离模板。
+
+（9）一个模板的类别只是一个属性。一个模板可以有多个属性。具有相似上下文或者有相似元素的模板，可以认为具有相同的某个属性。
+也就是说，属性可以比较容易的引入。
+但是，只有置信度足够的属性才能被引入到下一层的推理（搜索）。
+（10）因为多层是联合的，所以，搜索和统计是同步进行的。
+（11)一些常见特征抽取因子：位于句首（尾），词性，拼音，位于段首（尾），位于篇首（尾），位于*后面。
+（12）模板生成和匹配的重要因素：a. 需要全匹配还是部分匹配。可以将全匹配视为需要匹配开头结尾的部分匹配。
+b. 模板生成时，要分析是否模板内部因素之间的关系比模板外部之间的关系紧密。如果有例外，要给出理由。
+
+特征抽取因子用于计算模板相似度，给模板归类。
+
+
+（13）为什么以空格开头的词语没有意义。
+因为以空格开头的词语真的很多，而且分布很分散。
+这可能说明，空格与这些词语不在一个抽象层级上，因而不能结合成有意义的成分。空格后面的成分需要被适度的泛化。
+
+（14）一种最简单的可解释性，就是频次。只要是频次高的，我们就认为这个概念可以自我解释。可以视为原子概念。
+但那是一种最简单的解释方式。
+
+（15）为了便于召回高元模式。不必要都是由单个元素增量到多个元素而形成高元模式。
+可以由单个元素直接检索高元模式。
+
+（16）训练集上统计模板数量：
+ For each sentence pair in the training
+data, there is in general more than one derivation of the sentence pair using the rules
+extracted from it. Because we have observed the sentence pair but have not observed
+the derivations, we do not know how many times each derivation has been seen, and
+therefore we do not actually know how many times each rule has been seen.
+Following Och and others, we use heuristics to hypothesize a distribution of possi-
+ble rules as though we observed them in the training data, a distribution that does not
+necessarily maximize the likelihood of the training data.
+5
+Och’s method gives a count
+of one to each extracted phrase pair occurrence. We likewise give a count of one to
+each initial phrase pair occurrence, then distribute its weight equally among the rules
+obtained by subtracting subphrases from it. Treating this distribution as our observed
+data, we use relative-frequency estimation to obtain P(γ | α)and P(α | γ).
+
+
+（17）设计一个简单的模板生成，实现对菜谱步骤的解析：
+a. 初始要用一个外部词典来辅助切词，加上标签层级词典。
+可以引入分词，但是分词的置信度怎么计算。至少，在开始阶段缺乏依据来计算置信度。
+早期扫描时，缺乏计算置信度的条件。
+
+b. 每次召回一批候选后，要批量地进行一次筛选。上次只靠词频筛选太粗糙。要有多个筛选标准。
+筛选的目的，其一是为了降低内存，其二是为了提高可靠性。
+之所以要批量筛选，是为了提高效率。
+筛选时所需的内存数据有所不同，可以在内存和硬盘之间进行一个数据交换。
+c。有几个类型的东西：模板，词语也是模板。属性。
+
+（18）
+ 91 #对模板进行计数，当一个模板的计数超过一定阈值，且模板在父模板中的比重超过一定阈值（父模板的元素是子模板的子集）
+ 92 #这时候，可以对模板进行扩展生成子模板。
+ 93 #
+ 94 #一个模板中包含多个要素（槽位），同一个要素可以被归为一类。
+ 95 #
+ 96 #对要素的限定严格化。何时进行严格化操作。
+ 97 #严格化了之后，不仅会影响本模板，也会影响共享此要素的模板的计数。
+ 98 #共享要素：并集共享，还是交集共享呢。如果是并集共享，则可以提高模板的泛化能力，否则生成更多的模板。
+ 99 #如果是严格化要素，可是实施交集共享。将非交集部分从模板中去掉。
+100 #但是，如果需要提高泛化能力，则实施并集共享。
+101 #
+105         #元素之间的位置依赖,pos可以视为一种特殊的属性依赖
+106         self.elePos=[]
+107         #元素之间的属性依赖
+108         self.eleRele=[]
+109         self.eleProp={}
+118         #没有匹配上也不退出，因为可以统计一些别的有用信息
+125 
+126 #给定文本，对文本进行pattern的匹配
+127 #
+128 #每扫描到一个给定字符串，则看对其怎么扩展。其一，考虑其有没有更长的检索串。其二，考虑其有没有长距离约束。
+129 #其三，考虑其有没有泛化扩展(属性扩展）。
+130 #一个概念会有很多属性，但是，并不是所有的属性都会被触发为检索属性。
+131 #但在某些情况下，需要对概念的属性进行穷举，这时候，所有的属性都成了检索属性。
+132 #
+133 #总是运行在一个更高的空间，这个更高的空间有必要选择合适的层级。
+134 #目前写的这些底层脚本也是有用的，他们可以独立运行。
+135 #但是，在更高的空间中，要对这些底层脚本进行整合。
+ 90 
+139 def match(doc):
+140     proName="模式匹配扫描代码"
+141     if proName not in concepts:
+142         concepts[proName]={}
+143 
+144 #用一个proName指示怎么随着数据的变化而改变代码逻辑
+145 ##扫描代码过程本身也要随着工作空间的数据变化而变化的。
+146 #上面这样一个简单的处理，就可以让程序步骤受工作空间数据的影响。
+147 #
+148 #而且，程序在执行过程中的步骤信息，也要及时加到工作空间中。
+149 #
+150 
+151 
+152 #
+153 #这个是在设立索引的环节，为pattern设立多样化的索引，保证pattern能够在多种形式下命中
+154 #
+
+（20）一定要注意火候，火过了就不好吃。
+这里的“火候”该怎么解析。
+
+(21) pattern的索引项要加入到分词器中，这样分词结果马上能够得到索引项
+
+(22)模板中的元素为非终结符时，要去找这个非终结符字符串级别的召回模型。
+每一个类别都有一个以trie树为基础的召回模型，这个trie树可以落实到字符串层面。
+
+在召回时，会同时返回可能匹配的模板。
+这召回的模板中的元素如果仍含有非终结符，则要递归地召回。
+
+当某些元素或者模板被召回后，已经识别的因素要编码到索引中，以便加速后面的元素或者模板的召回。
+
+如果建二级索引，就类似trie树，可以节省空间。
+用dict这种方式，显然数据结构更灵活。但是时空消耗更大。
+
+为什么说要建二级索引。因为底层我们是一个个元素地输入。
+没有必要两个元素一起输入。
+
+但是对于高频，两个元素一起泛化未尝不可，这本身也可以提高效率。
+分词中最大匹配，不是将尽可能多的元素一次性泛化么。
+切片->[加工工艺][形状]->[加工工艺][加工程度]->[加工]
+这样的一个泛化路径直接记忆到词典中，不必要将这个泛化路径一一推导实现。
+
+在这里，我们需要灵活的数据结构做什么呢。
+其一，可以区分终结符和非终结符。难道将终结符和非终结符都放到同一个数据结构中。
+
+(23) 另外一个问题是：
+何时建这些索引。
+
+（24） 搜索方法的取舍。
+评估当前状态：召回率，歧义度（?），满足度(有跨越全文的模板)。
+歧义度：平均一个字符上面涉及到的模板数。
+满足度：是否所有的字符上面都有模板。是否满足所有约束。
+不过：约束的数量不是一开始就有的。约束的生成是一个困难的事情。
+
+(25)后台统计：
+上面的“切片”泛化，将推理过程合并。
+这样的东西可以放入后台统计过程。
+不过，现在如果要做这种后台统计，就要在推理过程中布点。
+当然，也可以直接从词典中做这种推理合并。因此“切片”必然是比较高频。
+但是，问题是词典中是否保留了完整的推理路径。保存完整推理路径的代价是很大的。
+【我们将推理过程表示成字符串，然后统计其频次。这里最大的问题是，泛化属于是期望的统计。
+这种统计很有可能走偏。怎样防止这种走偏是最大的问题。】
+
+
+这里引出一个问题：
+词典中该保存哪些信息。推理过程的中间结果所形成的路径显然不能保存，即便每个中间结果都可以单独保留，
+但中间结果联合形成的路径却无法都保留。
+对高频模式，可以存储这些中间路径。
+一旦中间路径保留下来，如果路径分叉很少，在匹配的时候，可以直接匹配高频路径。
+对于低频路径，存储其触发条件。
+
+
+
+9. 特征分层：
+(1)垃圾评论分类器，首先第一层特征是词语的特征。这个特征的分类器不能判定时，就是正反方的差异很小时，再引入长度特征分类器。
+不过最大的难点在于，你什么时候该引入第二层。
+
+(2)上面这种做法，对于层级之间的关系难以处理。
+就是选择一个合适的阈值很难，就是说，在什么情况下才引入第二层分类器呢。
+
+（3）绑定特征。引入绑定参数，对某一类的特征绑定一个权重。
+
+（4）特征要区分直接特征和间接特征。
+a. 垃圾分类器中，按词语分类是更直接的特征。
+而文章长度是更间接的特征。
+当然，作者的目的（广告，讨论，无聊）是更直接的特征，相对于词语。
+b. 区分特征相对于目标概念的层级，可以有助于我们更好地进行分类器的设计。
+
+10. 要不断写一些有创意的小点子的代码。
+这些代码不求体系，只求实现一个小点。这些代码要足够简单通用，便于在整合时把它们整合起来。
+每次，都要有意识把东西拆分成很多小点，这样，即便系统发生了变化，里面的小点还可以复用。
+词典也是，要拆分成很多小词典，不同处理形式的小词典。
+
+同时，在别的时候，用时间来整合不同的小点。
+
+11.  （1）怎么判定一个概念是文件呢。有路径，路径可以读。在工作空间指定目录下可以读到该文件。
+文件对象应该作为一个重要概念。因为同一个文件中的数据在格式上有相似处，在内容上有相关性，这是一个很重要的特征。
+（2）当然文件分两种，一种是在工作目录下可以读取到。可以定义一个工作目录的集合，一种是不可读的。对于这两者，要分别处理。
+
+这个概念可以外部指定。
+不过，即使指定了概念，每次这个概念的实体出现时，机器需要有识别的手段才行。
+因此，在每次读入一个文件时，仍需要把文件路径进行概念上的注册。
+
+12. 一个句子只有匹配到合适的模式，才能视为识别或者解读。
+对于一个菜谱中的食材，只有知道这个食材被怎么加工了，才认为识别。而且，其加工手段与历史不矛盾。
+如果只提到食材，没有提到加工，则视为未识别。
+【一个要素呼呼另外一个要素。】
+【这种呼唤是描述层面的呼唤。其实，描述层面仍可以对某些食材的加工进行隐含，甚至可以对食材进行隐含。】
+
+13. 
+Chinese NP:所述图像传感器于红色、蓝色和
+绿色色彩通道的光谱灵敏度
+English in Chinese order: the image sensor 
+device in red, blue, and green color channels de 
+the spectral sensitivities
+Reference: the spectral sensitivities of the 
+image sensor device in red, blue, and green color 
+channels
+Google: an image sensor means in said red, 
+blue and green spectral sensitivity of color 
+channel.
+The Chinese NP “所述图像传感器于红色、
+蓝色和绿色色彩通道的光谱灵敏度”consists of 
+a Chinese character “的” and a function word 
+“于” and three translation units: A“所述图像传
+感器”、B“于红色、蓝色和绿色色彩通道” and 
+C“光谱灵敏度”, and the right English order of 
+translation units was “C A B” according to the 
+reference. However, the boundaries of “B and C” 
+and the order of “A, B and C” in English of
+Google were wrong.
+
+Table5: Chinese and English orders of NPs with three translation units
+Order in Chinese Order in English Combinations” Structure Relations 
+a) NP1 NP2 NP3
+(NP1(NP2 NP3))
+((NP1 NP2) NP3) NP3 NP2 NP1
+((NP1)(NP2) NP3)
+b) PP NP1 NP2
+(PP (NP1 NP2))
+((PP NP1) NP2) NP2 NP1 PP
+((PP)(NP1) NP2)
+c) PP1 PP2 NP
+(PP1 (PP2 NP)) NP PP2 PP1 ((PP1)(PP2) NP)
+((PP1 PP2) NP) NP PP1 PP2
+d) NP1 PP NP2
+(NP1 (PP NP2)) NP2 PP NP1
+((NP1 )(PP)NP2)
+e) NP_B PP NP (NP_B (PP NP)) NP_B NP PP
+
+demonstrative pronoun
+In English NPs, the translation units also can 
+be obtained by the definite articles and 
+demonstrative pronoun. In Chinese NPs, the 
+translation units also can be obtained by 
+demonstrative pronoun. For example, the 
+word “这些(these)” is demonstrative pronoun in 
+translation unit“这些业务(these services)”
+ quantitative phrases
+In Chinese NPs, the translation units could 
+not obtained by indefinite articles and 
+quantitative phrases. For example, the Chinese 
+phases “一个,一种” and so on correspond to the 
+English words “a, an, one” .
+The Chinese words “第一, 第二, 第三, 第
+四” correspond to the English words “first,
+second, third, fourth”. 
+
+degree adverbs
+The English adjective “notable” in translation 
+unit “notable features” which are unique for 
+English, thus appropriate version cannot find in 
+Chinese vocabulary and expressed in phases 
+“很显著” in translation unit “很显著的特点”, 
+wherein “很” is a degree adverb. There are 
+many degree adverbs in Chinese, for example "
+很(very), 非常(extremely), 十分(very much), 
+特 别 (specially), 极 (too),(little), 更 (more), 较
+(better),比较(better), 最(best)" etc.
+
+
+" 已 经 (already), 曾 经
+(once), 早 已 (already), 刚 刚 (just now), 正 (be 
+being),正在(be being),就(be going to),就要(be 
+going to),将(be going to),将要(be going to),曾
+(once),刚(just now),才(already),在(be being)" 
+etc.
+ negative adverbs
+The English adjective negative prefixes, such 
+as “negative, opposite, and reverse” etc,
+corresponds to the negative adverbial words “不
+(un-),非(un-),没(dis-),没有(dis-),不用（un-）,未
+（dis-）”etc.
+
+
+14.（1） 英汉翻译中结构对应，这样的问题和特征怎么抽取。
+（2）哪些词语不适用于x2判定规则来做特征抽取。
+
+
+15. （1）看一个词语在相似的文章中出现的概率。不过，如果是雷同的文章，这个词语所代表的相似文章组的泛化能力太弱，则这个词语的泛化能力依然很弱。
+通过一个词语所在文章组的泛化能力来判定一个词语的泛化能力。
+通过一个元素所在模板组的泛化能力来判定一个元素的泛化能力。
+[文章组的判定和词语组的判定要相互促进。]
+
+（2）首先要告诉系统最基本的元素。
+如在图像中是像素，而在文字中则是字符。
+最基本的元素要作为初始的特征进行起始迭代。以此为基准发现更复杂的特征。
+而特征离不开目标。
+（3）我们要明白文本处理和图像处理的常见目标是什么。
+因此，标注的训练也是不可少的。
+标注告诉了系统的目标。
+为了生成标注集合，我们需要告诉系统，那些未标注的语料中哪些元素是应该作为目标的。造成缺一法。用缺一法构成训练集。
+但是，关键的是，被缺一的元素应该能够与我们文本分析的目标更接近。
+
+Neural network language models (NNLMs) [1] are a subclass
+of statistical language models that model P(wi
+|wi−k, . . . , wi−1) using a neural network.
+（1）这样的缺一法有点太泛。把表达的多样性和概念的多样性混合在一起。把可能性和合理性混合在一起。一个词语在这里是不是合理的，这个才是更重要的问题。表达多样性和概念多样性都不影响合理性。
+三层：合理性，概念多样性，表达多样性。
+不过，对于上面的概率，概率为0的就是不合理的。
+所以，问题关键不在于分层？或者不在于不合理性。
+而在于，如果不能区分表达多样性，就不知道那些是同义的。也就是丧失了泛化能力。
+（2）实际上，泛化能力是有的，因为可以计算一个未知串的概率。不过，问题是，不知道两个串的相似性。
+（3）没法区分哪些是隐含，哪些是组合。
+当然，如果隐含只是作为手段，而不是目标。可以生成表示向量，用表示向量实现上述目标。这时候就会涉及隐含。
+
+
+16。数值的表示：数值在时间上的比较和空间上的比较都统一为“Change”。都归一到集合或者范围。
+Definition (Quantity-Value Representation) In
+Quantity-Value Representation (QVR), a quantity is
+represented as a triple (v, u, c), where constituents
+in the triple correspond, respectively, to:
+1. Value: a numeric value, range, or set of values
+which measure the aspect, e.g. more than 500,
+one or two, thousands, March 18, 1986. The
+value can also be described via symbolic value
+(e.g., “below the freezing point”). We do not
+store surface forms explicitly, but convert them
+to a set or range. For example, “more than 500”
+is stored as the range (500, +∞). Details of
+these conversions are given in Section 4.2.
+【可数的事物，可以直接将单个的事物作为单位。不过，对于不可数的事物，如重量，就要定义“斤”“米”等作为单位。而被度量的事物只能成为对象，而不能成为单位。】
+2. Units: a noun phrase that describes what the
+value is associated with. e.g., inches, minutes,
+bananas. The phrase “US soldiers” in the
+phrase “Five US soldiers” is a unit.
+3. Change: specifies how the parameter is
+changing, e.g., increasing. This constituent
+often serves as an indication of whether or not
+the value is relative to another. For example,
+“She will receive an [additional 50 cents per
+hour]”, “The stock [increased 10 percent]”,
+“Jim has [5 balls more] than Tim”.
+
+
+比较难的数字推理：
+For example, inferring from the sentence
+“Militants in Rwanda killed an [average of 8,000
+people per day] for [100 days]” that “around
+800,000 people were killed”. Also, implication of
+ratios can be involved. For example, the sentence
+“[One out of 100 participating students] will
+get the award” implies that there were “100
+participating students”, whereas “[9 out of 10
+dentists] recommend brushing” does not imply there
+were 10 dentists. In case of word problems, our
+system missed non-standard questioning patterns
+with involved reasoning. For example, “Bryan has
+50 skittles. Ben has 20 M&Ms. Who has more? How
+many more does he have?”
+
+
+17. （1）有时候，我们引入一个框架对于事物进行描述。用一个框架是为了简化描述。
+不过，事物总有例外，我们容忍例外。
+其实，只要在对事物做推理的时候，我们没有忘记这些例外就可以。
+以前为了简化，是因为在推理的时候内存不够。
+但是在大数据时代，我们假定无限的内存空间。
+
+（2）能够知道哪是例外，哪是正常。
+能给出解释的是正常的。那么，何谓“解释”呢。
+
+（3）分类器为推导器提供理由。
+推导器要用这些理由解释样本。
+
+
+18. 
+Our ex-
+periments also show, that small phrases of up to three
+words are sufﬁcient for obtaining high levels of accuracy.
+Performance differs widely depending on the methods
+used to build the phrase translation table. We found ex-
+traction heuristics based on word alignments to be better
+than a more principled phrase-based alignment method.
+However, what constitutes the best heuristic differs from
+language pair to language pair and varies with the size of
+the training corpus
+这里说：短语长度越短，用规则（而不是复杂的统计）生成更有效。
+这说明，不宜过早引入复杂度。
+
+
+19.动态规划的算法
+对齐模型中的回溯。
+今天的论文中，计算未来成本时没有考虑distortion概率。
+这样的一些搜索行为意味着什么。
+电脑需要对这些搜索方式有自己的决策空间么，还是被动地接受。
+
+肯定需要。要将搜索方法与特征的特点，当前目标的特点结合起来。
+电脑来明白特征和目标概念的特点，在此基础上选择合适的搜索方法。
+
+
+
+20. （1）时间概念要整合到我们的推导框架中。
+首先，时间是一个属性。时间可以界定一个概念，圈定一个概念。发生在某个时间点（时间段）的事件，本身可以组成一个概念。
+其次，时间可以用于进行概念的推导。时间点+时间段--》新的时间点。这样，可以将同一个事件在两个时间点的表现关联起来。可以进行推导。
+对于电脑而言，重要的不是概念本身的实质，而是这些概念在我们的推理系统中的作用。
+（2）其他概念要类似地定义。
+
+21. （1）因果关系对于概率推理可能不是必须的。
+但是，因为我们人类推理时习惯于用因果推理。
+那么，打通概率推理和因果推理的关系，有助于人类和机器的交流。
+
+（2）explain away可以用如下概率推理表示：
+(A,C）正相关，（B，C）正相关，但是（A,B）者负相关。注意：这里的负相关不同于统计上的负相关，实际上是指A,B不会共现。因为这里的A，B不是属性，而是属性值。
+如果A，B独立则A,B不会explain away吗，错.因为A,B独立，并不代表A,B条件独立。explain away与条件独立才是互斥的。
+则（AC，B）独立或者负相关。
+这种情况出现在C可以被A与B划分成两个互不相交的集合的情形。
+如果C是苹果，而A是水果，B是公司，则满足上述情形。
+也就是说，explain away可以用非因果关系的概率推理来表示，可以概括一种更广泛的情形。因果关系中的情形只是一种特殊情形。
+
+不过在概率推理中，我们很难让机器信服地相信P(B|AC）的低概率。电脑说，低的P(A,B）和高的P(C,B)，该相信哪一个。
+这个时候，最好有更多上下文。看这些文跟A更密切，还是跟B更密切。
+如果，我们对C的上下文有划分，这种情况就比较好区分。
+
+explain away与条件独立是两个互斥的概念。条件独立就意味着没有explain away.
+In addition, the reversals introduce a new intercausal link between a and b, acccounting for the fact that the variables becom dependent on observing C.
+
+（3）explain away的概率表示：
+Pr(B|ACxy)<=Pr(B|Cxy)<=Pr(B|^ACxy)
+^A表示A的补。
+
+22. （1）多目标，多评价指标。要建立各种评价指标。在不同阶段上，有不同的统计量。
+对于不同的统计量，有不同的评价目标。
+对于各种异常，都试图解释。而不是只取那些统计上占相对多数的统计量。
+对于特征，也要有针对不同目标的特征。每个目标不同，评估指标不同。对于子目标，特征选择的评价指标也不同。
+在训练过程中，还有评价是否过拟合的指标。
+随着训练集的增长，但是准确率却没有增加。这个用于评价什么东西呢？
+
+
+（2）要进行解释，要确定那些是不必解释的原始概念。这个可以外部给定，也可以系统归纳。用剃刀原理。选择尽量少的概念来解释尽量多的现象。
+也就是进行迭代，假定某个概念是原始概念，然后，看其解释的事物有多少。然后，用另一个概念替换此概念，或者单纯去掉此概念，看可以被解释的事物有没有增加或者减少。
+（3）解释的另一个方面，就是要提问。如果没有问题，谈何解释。
+提问比界定基本概念是相互交织的。
+提问基于一些基本原则。原则1：相似的事物具有相似的属性（特征）。碰到两个相似的事物时，要比较其属性的相似性。如果碰到有属性不相似，就要提出假设来说明这种不一致性。
+假设1，表面看起来不相似的属性，其实只是描述层面的不一致性，两者的意思实际上是相同的。哈哈，要有特别的框架来界定两个词语（或者模板）的同义性。
+这里面可能会引入一些推理。
+比如“周一+三天后==周四”这样的推理。
+属性值上的关系推理，可以引入数学上或者逻辑上的推理。
+假设2，描述层面的另一种解释，用户不小心输错了，或者写了同音同形的错字，或者虽然本来不同意，但是作者认为是同义。
+假设3， 概念层面的多样性。两个事物都属于某个类别。而事物在该属性的取值上本来就存在多样性。要找证据，证明该类事物在该属性上的确具有多样性。
+
+原则2：某个类别的事物具有某种属性及其取值。
+这里可以同假设1，2,3.
+
+提问的基本路径是：（1）我已经通过某些途径证明（或者召回）这里有某个属性及其属性值（某个概念及其概念的具化），那么这里的真有该概念吗？我要找证据（或者别的途径，与提出假设的途径不同的途径）验证下。
+注意：召回与证明是不同的。
+（2）假设可以引出假设。我的假设是要证明A，而因为A经常与B共现（或者B是A的原因），那么我们提出新假设，就是要证明B。
+（3）挖一法也是一种提出假设的方式。现在流行的深度学习模型中，也会引入这种方法来提出假设，进行语言模型或者词语向量的学习。
+挖一法的逻辑是这样的：我通过字面途径得知，后面会有某个字符串。但是，我挖掉这个字串后，这个字面途径就被去掉了。强迫机器从别的途径去证明这个概念的存在。
+（4）explain away的解析：首先通过目标概念C，给出假设A，B。然后，分别去验证A,B的存在。这时候，要去掉C这个因素。因为C是提出假设的路径，要去掉这个路径。
+不过去掉概念C比挖一法更难。
+去掉一个概念比去掉一个字符串更难。概念是抽象的，其表现字符串分布在文段中，无法一一清理。
+这时候，就成了一个难题。
+在实际生活中，如果A，B两个概率很小，而且A，B相互独立，则可以视为A，B互斥，因为A，B共现概率太低。
+
+[因果联系不是必须的，自然而然的，固有的概念。也只是一个认识方法论。有了这个方法论，可以极大地降低搜索复杂度。]
+
+23. （1）解释首要的不是频次，而是有更大的覆盖范围。而是是否能够放入到一个更大的空间里面有一个合理的解释。
+P(AB)概率高比P(A)概率高更重要。
+（2）而比范围更重要的是解释模型。一个平面的模型可以有更大的概率，但是那样的模型没有解释意义，无用。
+平面的模型可以理解为神经网络只有一层，而且隐藏层节点只有一个，而取值固定。
+那么，我们应该怎么引入更复杂的神经网络。
+从目前的实践来看，网络的层级数目都是外部给定的。
+
+[采取自下而上的合并模式，可以避免层级的设定。这个正像LPA聚类一样，或者说层级聚类。]
+
+
+（3）我们可以设定一些启发式的规则来指导层数的设定。也可以通过这些规则自动生成概念（类别）。不过，这些规则本身会不会与数据，与我们解析文本的目标冲突呢。
+就是从最原始的字形概念开始，向上合并出更高层的概念。
+举例，从字形到类别：通过对上下文聚类来识别一词多义（一个词语在多个类中出现），通过将相同上下文合并实现近义词（同类）。
+
+24. 将重复模式作为一个特征放入相似模板的评估特征。 重复模式是指这个：A+B，A重复1次或者多次。
+这样的特征是外部启示，但是其是否真正适合作为相似性的评判标准，在什么情况（情境定义）下适合作为相似性的评判标准，这个要靠数据说话。
+
+25. （1）“重复模式适合作为评判相似模板的标准”本身可以作为目标概念。
+但是，这个目标概念的定义的要素不仅是文本本身。而相似度判定是机器学习操作本身。
+这要求我们把机器学习本身的操作也放入被学习的对象。
+（2）通过将多个概念绑定到一起，并判定这几个概念之间是否有某个关系。
+这样形成的新概念。其生成本来就需要选择标准。
+当然，前提是这几个概念之间的共现足够多。实际上，既然是多个概念共现，本身也可以组成模板。
+（3）在绑定机器学习操作和目标概念时，实际上是一种调参，需要有目标函数。
+
+
+26. 智能推导是一个消耗很大的工作。这个过程中需要人工的干预。
+这两个因素都要求智能是一个永不停歇的推导系统。
+第一，人工干预不知道何时会到来。如果人工干预一下子就给予的话，没有交互性。
+第二，既然消耗很大，就要争取尽可能多的时间。
+那么，如果前面程序不成熟，不关闭前面的程序，怎么可以呢。
+注意：可以关闭程序，但是永远要复用前面已经产生的数据。这个才是基本原则。
+为了重用已经产生的数据，数据要不断持久化，使得程序中断以后还可以用。
+为了保证能够重用，数据的记录要尽量详细，要尽量让后面的程序知道这些数据产生的根据，目标，特点。
+
+27.（1） 类别内部的紧密性。如果紧密，那么类别本身就指定了各个成员的基本属性。如果不紧密，则该类别不能作为成员的默认属性，只有在特定场合下，该类别才会被检索到。
+可以外部指定。
+
+[该类别内部在哪方面相似，则其在外部使用的使用也就体现出某个规律。
+如标点符号的功能主要是结构功能，那么他们之间的相似度也就是结构功能的相似度。
+]
+
+（2）停用词这样的一个类别，其内部紧密度显然不高。
+（3）抽象的概念，如果只是从表面字形去计算相似性，则很难计算其真实的紧密度。
+比如，标点符号，它们相互之间不会相邻出现（数字则会相邻）。
+标点符号的内部一致性只能由外部指定。
+
+28.（1） 外部指定语料类型：
+a.领域：菜谱，军事，政治等。
+b.形式：网文，表格，query，词典。
+   层级的表示。每个层级又可以有自己的层级类型。
+c. 可信度。
+(2)外部给定的语义，与内部的解析互相印证。
+
+29. 模板生成规则：
+（1）要素重复：如数字。
+（2）可以省略的成分：
+切成小丁 2
+切末 34
+切成片 3
+肉切 60
+切段备 4
+切好的 17
+净切段 2
+再切 4
+用刀切 2
+净切 77
+切片。 6
+a. 【“用刀”----》“切”已经隐含“用刀”】-----------“用刀”属于工具维度。工具很容易可以被动作隐含。这可以由外部加入。
+b. 找相似模板的主要成分: 把修饰成分提取出来。
+不过，对于这些修饰成分是否可以省略，这个需要斟酌一下。
+
+English φ(¯e|
+¯f) English φ(¯e|
+¯f)
+the proposal 0.6227 the suggestions 0.0114
+’s proposal 0.1068 the proposed 0.0114
+a proposal 0.0341 the motion 0.0091
+the idea 0.0250 the idea of 0.0091
+this proposal 0.0227 the proposal , 0.0068
+proposal 0.0205 its proposal 0.0068
+of the proposal 0.0159 it 0.0068
+the proposals 0.0159 ... ...
+– lexical variation (proposal vs suggestions)
+– morphological variation (proposal vs proposals)
+– included function words (the, a, ...)
+– noise (it)
+变体：修饰成分，词形变化。这个有什么普遍含义。
+
+（3）两个组成部分的互信息值比较高。这样的元素才可以增长。
+（4）归类和模板生成要同步进行。
+归类的时候注意用分类算法。--------------找同义词。
+归类就是提取某个模板的上下文特征。----------根据这个特征找上下文相似的模板。因为无法为每个模板建立二分分类器。召回筛选很重要。
+（5）人工植入一些复杂模板。
+自动生成的模板要向这些人工模板靠拢，用这个约束使得自动模板不至于太偏颇。
+(6)分块很重要。
+那些分块的标识词语，如“()"中加补充内容。
+（7）下面是一些报告中提到的短语机器翻译相对于词机器翻译的优点：
+Advantages:
+– many-to-many translation can handle non-compositional phrases
+– use of local context in translation
+– the more data, the longer phrases can be learned
+这里提到了“非构成性（non-compositional)”。
+显然，对于具有非构成性的元素组合，是满足模板生成的要求的。
+但是，对于模板而言，具备构成的元素也是符合模板生成的要求的。
+
+模板的两个真是要求是：其一，完整性；其二，层级一致性。
+也就是一个模板内部的元素要位于同一个层级，而且也覆盖一个概念内部该层级的所有必要元素。
+为什么用“必要”，因为描述概念中，不会在一个描述模板展现一个实体概念的所有要素。而是在特定层级的描述上下文中，涉及该实体概念的特定层级的所有要素。
+层级一致性，要求各要素的泛化程度是一致的。
+
+我们需要一些指标来评定所生成的模板是否满足上述的标准。
+
+不过从短语翻译的实践来看，有些短语人工看起来很不像短语，但是对于机器翻译有帮助。
+这个说明，对于语义理解可以不一定要严格满足上述标准，对于模板生成，上述标准指数为了更高效地在一个搜索空间进行搜索。
+在不影响检索效率的情况下，这个标准是可以突破的。
+【考虑一下“不影响检索效率”，这对于系统设计意味着什么呢？】
+
+（8）过去的分词系统中，没有模板生成的定义搞清楚，导致不同分词标准的不一致。在这个地方导致的歧义，或者没有找到合适的表示方法，因此无法为后续的语义解析环节提供一个很好的基础。
+语法分析依赖于分词基础，却把词语内部甚至是短语内部的构成关系都没有纳入进来。
+
+30. 在每个模块中加入调整框架。
+这些调整因素有自己的评价指标。随着系统的运行，这些调整框架会找到最优的参数模板。
+当参数稳定后，则会固化参数以提高效率。
+参数固定后，往往以新的模块来作为旧模板的子类，默认将调用这个子类。设立一个回退机制。
+
+31. （1）语法分析是自然语言理解所必须的吗？还是由人为定义的因素在里面。
+当然，在系统刚运行之初，可以将这个语法作为一个外部知识来源。
+当然，怎么将这个外部知识来源很好地与系统的现有知识结合起来，是一个很有意思的问题。、
+
+词语的语义如果被视为理所当然的话，一个词语的不同词性往往代表了词语的不同语义。词性起到了一个划分语义的作用。
+从这个层面来看，词性是抽象了语义中的某些要素。但是，为何是抽取这个要素，而没有抽取别的要素，这个看起来有很大的人为规定性。
+
+这种人为规定性提供了一种更大的抽象性。
+
+（2）在基于短语的机器翻译中，要求短语符合特定的语法模式，并不能取得很好的翻译效果。
+这说明了什么：其一，人为规定的语法模式不能穷尽真正的语法组合模式。
+其二，将符合人为规定的语法模式的短语对加大权重，而且保留所有其他统计得到的短语模式，也并没有带来更多的信息增益。
+从这个角度而言，基于统计的短语模式并不劣于符合语法模式的短语模式，这表明语法模式对于语义理解并不是必须的。
+
+（3）规定语法模式或者只是为了便于对语言的研究。
+另外，可以提高对语义解析空间的搜索难度。为搜索提供启发式规则。
+这样的启发式规则可以提高检索效率，但是并不是必需品。在我的系统里面，也可以从这个原则去考虑语法规则存在的意义。
+
+（4）语法可以作为语义理解的一个约束。如果触发了某个语法条件，则要求满足这个语法约束。
+但是，如果没有触发任何语法条件，则不必强制其具备现有的某个语法规则。要具备生成自己新的语法约束的能力。
+现有的语法解析都是试图使得系统满足现有规定的语法约束。如果没有，也要强制赋值一个，这个是最大的问题。
+因此，判定是否触发，这个是很重要的判定。
+
+那么，怎么定义触发标准，这个是个很重要的问题。
+
+（5） 只有少数的语法标注文本。
+怎么从中学到基本规则，以至于能够标注大量其他文本。
+知道触发条件，对于不满足触发条件的内容拒绝标注。
+过去的机器学些没有好好地定义触发条件。
+
+而且，过去的机器学习很依赖于训练集的分布与测试集分布的一致性。
+表明机器学习引入了很多相关特征，这些相关特征在特定分布下因为能够反映实质特征而起作用。
+但是，一旦分布发生变化，他们与实质特征的相关关系发生变化，从而他们与目标概念的关系也发生变化。
+【从模板生成的角度分析，这些相关特征与目标概念不在同一个模板的同一个层级。但是，这些相关特征可能与实质特征在另一个模板中的同一个层级。】
+
+
+32. （1）怎么有整体概念。
+如果电脑对于某个文章发现生疏词汇特别多，或者特别难以“理解”，则会中止对该文章的扫描。
+所谓先易后难。我们人也会找一些介绍基本概念的文章。
+
+[这些文段被视为异常，将按照后面的"find exception, group relative
+things"的原则处理。]
+
+（2）需要一些指标来评价对文章的理解难度。
+这就是自知之明。如果突然碰到了一个新领域，我们的系统不至于把这个新领域的东西和过去已经学习的东西都混杂在一起。
+（3）这跟碰到新词语要建立新的词条一样。
+（4）碰到新的领域则不止建立新的词条，而是建立一个新的词语集合。
+
+(5)
+不同语体的语料混合在一起没有同质性，因此也得不出可靠
+的语法规律，这一点朱德熙先生和胡明扬先生都有过很好的论述。
+他们一再强调了书面语和口语语体区分的重要性，其实，从更严格
+的视点来看，书面语和口语的区别仅是最基本的一种，语言成品常
+常是不同语体不同程度地糅合的结果，语言研究者的任务首先是
+辨析清楚各种语体，然后分别研究其中的规律。例如首先可以分
+出独白语体和对话语体，独白里又可分为叙述体、论证体、说明体、
+劝告体等，对话里还有日常对话和特殊对话的区别。
+
+(6)功能原则和句法原则：句法原则的从属性，滞后性。
+当功能原则跟句法原则相冲突时，一般也应尽量从功能角度
+解释才 能维护句 法规则的 一致性 。
+
+如“ 老周和老陈分别当了主任和副主任”，只能理解为“ 老
+周是主任，老陈是副主任”而不能相反。 而我们却看到下面这个
+例子：
+我和德熙兄是１９５２年分别从清华大学和燕京大学调到北大中文
+系工作时才认识的，那时他正忙于准备去保加利亚讲学，虽然住得很
+近，但来往不多（。林焘《 哭德熙兄》）
+熟悉情况的读者都知道，林先生来自燕京大学，朱先生来自清华大
+学，事实与“ 分别”的表述正相反。
+
+句法原则被违背了。正如写个错别字一样，没什么事。
+
+（7）拿动宾组合的分类来说，现在一般是以宾语和动词之间的语
+义关系为纲来分类的。如把宾语的语义成分分成施事、受事、与
+事、工具、原因、结果、处所、时间等。如果我们换一个角度，着眼于
+名词性宾语自身的功能属性，则可以得到不同指称性质的若干类
+别：
+ａ．无定宾语：开了一个饭馆找个替身 想起来一个人 打两场球        【集合中的某一个】
+ｂ．有定宾语：找着她了 逛颐和园 来这儿 碰见刚才说话那人      【集合中的那一个】
+ｃ．无指宾语：说话 办事儿 睡行军床 教数学当司仪              【未指定哪个，抽象的概念？无指成分由于不指称话语中任何实体，所以所在句子的情状意义十分模糊。典型的无指宾语句往往只是
+一种说明，而不是叙事，】
+
+
+（8）不同类型语言的区分标准：
+太田辰
+夫先生认为现代北京话形成于１８世纪末，他提出七项主要特点作
+为标准：１）第一人称代词的包括式和排除式“用 咱们“”我们”区别，
+不 用“ 俺“”咱 ”等；２）有 介词“ 给 ”；３）用 助词“ 来 着”；４）不 用助 词
+“ 哩”而用“ 呢”；５）有禁止副词“ 别”；６）程度副“词 很”用于状语；７）
+“ ～多了”置于形容词之后，表“示 ……得多“”……得远”的意思。
+（ 见太田辰夫１９８８）清末的北京口语发展到老舍时代有了一定变
+化是大家公认的，但迄今我们未见有谁像太田先生这样提出若干
+标准来说明那半个世纪的发展情况。如果我们的研究能够从当代
+回溯，先总结出当代北京口语若干有特色的语法现象，再拿着跟老
+舍作品进行比较，寻求出一些能作为标志的东西，那将是十分理想
+的事。如果再从老舍作品继续做回溯工作，就可以对北京口语一
+个世纪以来的发展有一个全面客观的了解。
+
+（9）成分分析：
+他们的某些见解对我们的研究具有重要的启发意义，比如
+Ｈａｌｌｉｄ（ａｙ １９８５）在分析英语句子时指出，主位部分可以包含三个方
+面的成分，即：意（念 ｉｄｅａｔｉｏｎａｌ）成分、人（际 ｉｎｔｅｒｐｅｒｓｏｎａｌ）成分和篇章
+（ ｔｅｘｔｕａｌ）成分。意念成分是那些在句子的及物性结构中担任角色
+的成分，人际成分包括表示语气、态度的成分和呼语性成分，篇
+章成分包括各种连接成分和关系成分。在英语里，主位成分和述
+位成分可以根据语调形式判断，例如对一个英语句子可以作如下
+分析：
+（ １）Ｏｎｔｈｅｏｔｈｅｒｈａｎｄｍａｙｂｅｏｎａｗｅｅｋｄａｙｉｔｗｏｕｌｄｂｅｌｅｓｓｃｒｏｗｄｅｄ．
+篇章成分 人际成分 意念成分 述位
+这种分析使句子里的次要信息在主位部分里各得其所，焦点信息
+在述位部分里得以突出。三种主位成分的分别和靠句重音辨识焦
+点信息的方法在汉语信息结构的分析中都是可资借鉴的。
+【从实体概念与描述概念的关系入手。
+意念是对实体概念的描写，人际是文章内容与作者读者的关系，篇章成分是不同文章内容之间的关系。】
+
+主位标志既然是次要信息和重要信息的分界线，它就绝不会
+出现在焦点成分里：【下面都是非法的例子】
+（ ６＇）＊这伙人没事总爱在胡同口大槐树底下玩啊台球。
+（ １１＇）＊其实你也就是啊一般人。
+（ １４＇）＊咱们谁也不要使啊这个电话了。
+（ １７＇）＊最好谁也别欠啊谁的情儿。
+（ ３０＇）＊咱们国家又没有啊去那儿的飞机。
+
+句中语气词固然标志着次要信息的结束，
+更标志着重要信息的开始。语气词可以说就是个信号，说话人利
+用它引起听话人对下文（ 重要信息）的重视。如
+
+我们认为，一般叙述语（体 ｎａｒｒａｔｉｖｅｓ）里主位在前、述位在后的
+语序，是体现了语用学的可处理原（则 ｐｒｏｃｅｓｓｉｂｉｌｉｔｙ ｐｒｉｎｃｉｐｌｅ），先从
+听话人熟悉的情况说起，再引出新的、重要的信息，这是在有比较
+从容的谈话环境时最符合听话人心理认知过程的、最合理的信息
+结构处理方式。但是在简短紧凑的对话语（体 ｃｏｎｖｅｒｓａｔｉｏｎ）里，要
+求说话人在最短的时间里，把最重要的信息明确传达给对方，这个
+时候，简练原（则 ｅｃｏｎｏｍｙ ｐｒｉｎｃｉｐｌｅ）和清楚原（则ｃｌａｒｉｔｙｐｒｉｎｃｉｐｌｅ）就
+显得特别重要，重要的信息成为说话人急于说出来的内容，而次要
+的信息就放到了不显要的位置上。这样就出现了后置主位现象，
+如：
+（ ３９）别打岔，到底去不去你？
+（ ４０）怎么都不说话？好看么倒是？
+
+
+33. （1）总是允许例外。
+对于特殊的词语，特殊的概念特殊处理，这总是一条重要原则。
+不要试图找通用方法。
+
+在每个地方，可以为特殊的词语加上针对该词语的特殊搜索路径。
+
+对特殊的概念特殊处理，是为了提高搜索效率。
+一旦一个系统变得很复杂，那么到最后，搜索效率会成为最重要的制约因素。
+
+人类的语言里面总是允许各种异常。这导致人类语言就极大的包容能力。
+为了在这个极复杂的系统中进行有效处理，人类语言对不同词语的语法处理本身也会有例外。
+【理解和适应这两种异常对构建自然语言处理系统非常重要。】
+
+（2）每一个这样的例外的地方，相当于一个回溯点。
+如果按例外处理时发生了异常，则会回退。
+与通常的k-best需要比较k-best的概率不同，这里是深度搜索。
+一旦深度搜索没有发现异常，不会回退。
+k-best中没有异常一说，必须选择概率最高的。
+
+34. 从短语中的词语重组学些重组规则：（重组就是：机器翻译的调序）
+Second, in order to obtain rules from the phrases, we look for phrases that contain
+other phrases and replace the subphrases with nonterminal symbols. For example,
+given the initial phrases shown in Figure 2b, we could form the rule
+X → 
+X 1 duonianlai de X 2 , X 2 over the last X 1 years
+
+35. 产生的候选模式内部相似性太高会对训练产生不良效果【一个有意思的避免这种情况的方法是避免一侧出现两个相邻的非终结符号】：
+This scheme generates a very large number of rules, which is undesirable not only
+because it makes training and decoding very slow, but also because it creates spurious
+ambiguity—a situation where the decoder produces many derivations that are distinct
+yet have the same model feature vectors and give the same translation. This can result in
+k-best lists with very few different translations or feature vectors, which is problematic
+for the minimum-error-rate training algorithm (see Section 4.3).
+
+To avoid this, we filter
+our grammar according to the following constraints, chosen to balance grammar size
+and performance on our development set:
+1. If there are multiple initial phrase pairs containing the same set of
+alignments, only the smallest is kept. That is, unaligned words are not
+allowed at the edges of phrases.
+2. Initial phrases are limited to a length of 10 words on either side.
+3. Rules are limited to five nonterminals plus terminals on the French side
+4. Rules can have at most two nonterminals, which simplifies the decoder
+implementation. This also makes our grammar weakly equivalent to an
+inversion transduction grammar (Wu 1997), although the conversion
+would create a very large number of new nonterminal symbols.
+5. It is prohibited for nonterminals to be adjacent on the French side, a major
+cause of spurious ambiguity.
+6. A rule must have at least one pair of aligned words, so that translation
+decisions are always based on some lexical evidence.
+
+
+36. 怎么处理不同类型概念的嵌套：
+不同的划分角度。
+从语体划分，有对话语体，叙述语体，论证语体，说明，劝告等。
+从格式类型，有表格，网页，query，小说，诗歌，专利等。
+从主题类型，有军事，政治，经济，科技等。
+从语法类型，有词性，从句关系。
+有不同类型的概念，时间，数字等，这些概念会贯穿不同类型的实体和主题中。
+有表达文段与听者、读者关系的词汇。有文章倾向性分析。
+
+
+有表达年代的差异，古代的语言和现代的语言有明显差别。
+这些划分角度可以由外部专家定义，这个完全没有问题。
+不过，外部指定了一个方向后，机器如何完善这个定义，具体化这个定义，并不容易。
+
+（2）外部指定方向后，机器要知道不同角度的概念是怎么组合的。
+最重要的一个组合是语法概念和实体概念的组合。
+
+（3）语法和实体的组合中：
+第一要解决语法功能词语与实体概念词语的混合使用。
+语法功能词内部之间的分布会比较相似。语法词所在的小圈子应该是语法词。而实体概念词又各自有自己的小圈子。
+语法功能词会出现在一些相似的槽位上。
+
+(4)基于互信息来发现词语之间的关联度，层级：
+统一 发票 199 734 1512 15.552
+统一 监制 199 217 792 14.3867889908
+统一 章 199 193 600 9.27835051546
+统一 直辖市 199 96 384 7.60082474227
+统一 国家税 199 96 384 7.60082474227
+统一 总局 199 96 384 7.60082474227
+统一 自治区 199 96 384 7.60082474227
+统一 务 199 177 480 6.47191011236
+统一 套印 199 72 288 5.68109589041
+统一 税务 199 131 384 5.58545454545
+上面这个出现在菜谱步骤中，是因为重复广告导致的。
+也就是说，互信息首先可以发现重复模式。
+
+这些重复模式本身应该被视为一种类型特征。
+要将这种类型特征在常规统计中做特殊处理。
+
+
+37. (1)一个词语的结构属性。
+像动词、名词这样的属性，最好看成是一种结构属性。
+这样的属性包含的语义信息已经很微弱。
+(2)词性虽然没有语义含义，但是因为能够帮助界定槽位。
+比如，“我上了这个女人”。这里的“上”做动词用。
+这样，我们就能知道在这个语义关系中，“上”字是表示一个动作。
+后面可以根据上下文了推断这个“上”字的含义。
+(3)数字可以作为编号。这个在文章中是一个重要的结构特征。
+不过，这种结构特征的描述和推理（索引）并不容易。
+(4)动词可以用“不”修饰，名词不可以。
+“不”这样的词语，可以跟词性在同一个抽象层级，在同一个槽位里面。
+抽象层级，是个很抽象的概念。不好理解。
+在电脑里面，怎么应用抽象层级这个东西。
+显然，抽象层级越高的概念，其覆盖范围更广。
+不在同一个抽象层级的概念，如果放置到一个模板中，其搜索效率显然不是很高。
+用互信息可以很好地抑制这种情况。
+比如：“牛肉”跟“，”共现次数很多。但是，他们一个是纯结构功能，一个有语义功能。
+虽然在菜谱这个场景下，两者共现很多，但是，在一个更大的文本空间中，共现就少了。
+
+###词语的抽象层级要与文段的抽象层级的分析结合起来。----------实际上就是分析词语的上下文特点。这些上下文甚至可以上升到篇章类型的划分。[不过一些抽象词汇的上下文很不好分析。]对于抽象词汇，可以看看这些词语在描述上下文中的影响范围。
+比如，数字的篇章类型几乎没有限制。
+不过，在作为数值时，其描述上下文的影响范围很小。
+而作为编号时，其描述上下文的影响范围则很大。
+###
+
+这时候，我们可以说，“牛肉”的上下文与“，”的上下文的相似度不同。
+(5)蔬菜水分含量多，多数含蛋白质很少，能量低。
+“多数”这样的代词，虽然与“蔬菜”不在同一个概念的抽象层级。但是，在这里的描述结构上，两者却位于同一个层级。
+因为不在同一个概念抽象层级，因此，两者不会出现在同一个模板内部。
+应该先对“多数”进行解析，实际上是进行指代消解，从更一般的层面来说，就是进行隐含内容的召回。
+模板匹配的过程本身就可以看成是一个隐含召回的过程。因为模板本身是一个隐含的因素。
+对“多数”进行隐含召回后，召回后的因素与“蔬菜”就处于同一个抽象层级了。
+
+另一种方式，是将“蔬菜”泛化为集合名词，这时候就可以与“多数”在同一个抽象层级，从而可以形成模板了。
+也就是当两个不同抽象层级的词语，在描述结构上却并列时，就需要将两者的抽象层级进行转换。
+
+(6)当一个文段中，有不同的语体混合。比如叙述体和对话体混杂。诗歌与说明文体混杂。
+能否很好地识别。
+这些不同的文体会有不同的结构特征。
+对于诗歌，句子的长度排列，每行文本的分布。
+当然，诗歌的语法结构也会差异很大。
+
+(7)我们怎么定义词语的结构属性：【在多大的上下文范围内较均匀分布。】
+上面提到了篇章分布，上下文影响范围。
+上下文影响范围该怎么定义，在**范围的较均匀分布。
+篇、段、句子、字符可以作为天然的结构分割区域。当然，还有配对的符号，如引号，括号。
+[什么样的分布才算是均匀的，这个也要通过计算。]
+
+
+38.（1） 通过发现文章内部的呼应关系来自动生成文章的结构。
+过去的parser，通常采用自下向上的归并手段，意味着其对呼应关系的利用并不充分。
+A、B之间存在呼应关系，是指A、B之间存在相似或者关联关系。
+（2）文章结构的生成过程就是描述模板的生成过程。
+
+
+39. (1)像泛化出模板，然后填充模板的要素，这样的一个过程可以表达成一个字符串集合。
+使得泛化过程本身可以像字符串统计那样进行处理。
+过程字符串化。
+我们将“上”泛化为动词，这个动作可以抽取成一个含有两个词语的字符串，词语1是“泛化词性”。
+词语2，“原词是‘上’”。词语3，“词性是动词”。
+我们将泛化过程用词语记录下来。后续可以通过统计这些词汇来统计不同泛化出现的次数。
+这样，可以得出哪些泛化出现的次数更多。
+出现次数更多的泛化在后面要有更高的概率出现。
+(2)上面的“泛化词性”可以看成是一个模板，后面的“原词”和“词性”赋值，是要素填充的步骤，每一个步骤用一个词语来表达。
+
+40. (1)传统的模型中，异常总是被丢弃了。
+对于自然语言，打破规则，生成新概念，是一种基本能力。
+我们的语言处理模型，必须能够跟上这种新的能力。
+(2)一旦发现异常，要将与其相关密切的因素找出来。然后，界定异常出现的上下文特征。
+（3）进行层次聚类。看异常出现在那个层级的聚类结果中。
+find exception and group things relate to it
+（4）不过什么时候报告异常是个问题。
+在刚开始的时候，机器掌握的知识很少，对什么都好奇，什么都是异常。
+挑选需要报告的异常也是很重要的事情。
+
+另外，不是所有的异常都需要报告给人类专家。
+有的异常只是指示机器该抽取新的候选了。这些候选的出现频次如果超过一定阈值，则形成了新的知识。
+
+
+41. 规则和系统的整合问题。
+为什么过去规则的系统比不上机器学习的统计系统。
+(1)是因为过去的分类系统都是只有一层的系统。在只有一层的系统里面，如果能够很好解决过拟合问题。统计系统更优。
+(2)这是因为规则存在一个描述问题。如果没有一些抽象概念作为基石，规则很难被描述。
+(3)规则的最大问题不在于其是否优于统计。关于这样的讨论没有意义。
+规则最大的问题在于其可扩展性，适应新的领域。但是，其实统计也有这样的问题。
+在一个分布上训练的模型，换了一个分布，其表现就差异很大。当然，你可以说，在新的领域重新训练模型。
+(4)其实，统计往往是基于规则之上的。语法标注系统中，动词，名词，VP这些定义，都是人给定的。
+(5)规则的一个更大的问题是导致编程复杂度过大而不便于管理。
+分类器中，将规则都编码到特征的抽取过程里面，这样，便于管理规则的复杂度。
+特征之间相互独立，更是解码了联合特征，规则相互交织的这种复杂度。
+（6）在新的系统设计里面，我们仍要不遗余力地引入规则。不过，在增加规则之间交互的同时，怎么控制代码的复杂度，这是一个需要注意的问题。
+（7）将规则之间的关系处理，用一定的统计数据来管理，减轻人工干预的程度。这个是很重要的。
+这样，规则之间的关系变化，可以随着数据的变化而变化。
+(8)还有一种担心，人为规定的结构与语言本身的结构可能不一致。
+因为规则优先给予更高的优先级，实际上会导致错误的引入。
+这种情况的确存在，有时候我们认为某个字符串一定具有某个概念，但是实际的语法统计并非如此。
+也就是说，规则之外的独立的校验机制是很重要的。
+而且，如果我们只是将规则视为一种压缩搜索空间的手段，提高搜索效率，在对候选进行评估时，配以独立的评估准则，则上述担心是可以避免的。
+
+42. (1)单双音节对词语结构的影响：
+单音的地名总是带上类名，如“英国”，双音的就不需要，“印度”。
+一个月的头上十天必须说成“一号”，“十号”，“十一”以后就不是必须的。
+地雷->扫雷
+进行学习(*进行学）
+
+以上规律说明了什么呢？
+字符串的长度分布是一个很重要的因素。对于模板而言。
+那么长度分布应该从哪些维度去提取特征呢。
+"进行学习"，说明了不同要素之间长度的均匀分布属性。
+“英国”和“印度”这个，说明长度是1，或者2，这样的长度应该作为特殊处理。
+
+(2)结构模式：标题-正文模式  对应到表格中是“表头-表行”模式
+标题-正文模式也可以看成是“名称-实体”模式。
+或者说“总-分”模式。
+[但是，这种名实模式在什么情况下会被检索到，会被使用呢？其触发条件是什么。]
+
+
+43.谓词的二元化：
+如果要增加事件发生的时间的信息，在二元化之前，send(TOM,JOHN,BOOK)，就需要增加第四个变量时间，这种看似很小的变化可能会涉及对谓词send的所有产生式规则和控制系统做很多的变化。
+但是如果采用二元化的方法，就只要把sendtime作为定义域的一个实体，通过添加新的二元关系、函数和有关联的规则来实现添加信息。
+
+
+
+44. 
+The Myth of Modularity In Rule-Based Systems for Reasoning with Uncertainty
+David Heckerman, Eric Horvitz
+Abstract: 
+In this paper, we examine the concept of modularity, an often cited advantage
+of the ruled-based representation methodology. We argue that the notion of
+modularity consists of two distinct concepts which we call syntactic
+modularity and semantic modularity. We argue that when reasoning under
+certainty, it is reasonable to regard the rule-based approach as both
+syntactically and semantically modular. However, we argue that in the case of
+plausible reasoning, rules are syntactically modular but are rarely
+semantically modular. To illustrate this point, we examine a particular
+approach for managing uncertainty in rule-based systems called the MYCIN
+certainty factor model. We formally define the concept of semantic modularity
+with respect to the certainty factor model and discuss logical consequences of
+the definition. We show that the assumption of semantic modularity imposes
+strong restrictions on rules in a knowledge base. We argue that such
+restrictions are rarely valid in practical applications. Finally, we suggest
+how the concept of semantic modularity can be relaxed in a manner that makes
+it appropriate for plausible reasoning.
+
+
+46.一般推理和专家推理：（一个系统要分一般推理模块和专家推理模块）
+In a simple interaction, the generalist might consult a specialist dedicated
+to
+a particular decision problem.  The model for the decision, including
+alternate
+acts, relevant events, outcomes, and probabilities, are assumed to be
+explicitly encoded in the knowledge base of this super-specialist.  In such a
+situation, the generalist needs only communicate to the super-specialist the
+patient-specific details of the problem such as the patient's symptoms and
+preferences.  The specialist then computes the optimal strategy using the
+calculus of decision theory and reports the result to the generalist.  If an
+explanation is desired, the super-specialist could display to the generalist
+the
+sensitive portions of the model along with any needed discussion of decision
+theory.
+In a more complex interaction between generalist and specialist, the
+generalist cannot assume that the specialist has a pre-existing decision model
+and therefore must present an accurate account of the decision problem to the
+expert.  The consult-requesting generalist cannot in practice describe {\it
+all}
+of its information relevant to the problem; instead, it must choose
+appropriate
+levels of abstraction at which to convey its knowledge.  For example, rather
+than presenting its consultant with a photographic image of the patient's
+retina, it might simply report that the fundascopic examination was
+``normal.''
+In this communication task, the generalist must balance the costs of precise
+communication with the benefits of avoiding misinterpretation.
+
+47. 靠多个模块交互来解决问题，不期望单一模块解决问题：
+In this essay, we have tried to unify a growing body of research that
+implicitly
+or explicitly treats the decision calculus as an object language manipulated
+by
+higher-order mechanisms for uncertain reasoning.  Those who would invent
+calculi to directly address some of the knowledge engineering issues are
+asking too much from such a limited class of representation mechanisms.  A
+more reasonable role for uncertainty calculi in knowledge-based computer
+programs is to provide a grounding in decision theory, thereby offering a
+semblance of normative status to the decisions made by these programs.
+
+
+
+
+

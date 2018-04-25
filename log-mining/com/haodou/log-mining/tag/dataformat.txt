@@ -1,0 +1,3 @@
+hyp.txt [gbk_of hyp.utf8]
+hyp.utf [c2 上位词_of c1]
+

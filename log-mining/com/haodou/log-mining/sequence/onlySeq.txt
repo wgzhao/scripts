@@ -1,0 +1,3 @@
+search.gettags	search.getsearchindex
+search.getsearchindex	search.getsuggestion
+

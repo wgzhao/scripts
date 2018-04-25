@@ -1,0 +1,42 @@
+--add jar /home/likunjian/hive-json-serde.jar;
+add jar /usr/hdp/current/hive-client/lib/hive-contrib.jar;
+--add jar hdfs://hdcluster/udf/lib/htmlparser-1.5.jar;
+add jar hdfs://hdcluster/udf/bing.jar;
+
+set hive.auto.convert.join=false;
+
+use logs;
+
+create temporary function html2text as 'com.haodou.hive.bing.Html2Text';
+
+add jar hdfs://hdcluster/udf/haodoubihiveudf.jar;
+create temporary function gfmt as 'com.haodou.bi.qunachi.udf.GetFoodMasterType';
+create temporary function fd as 'com.haodou.bi.qunachi.udf.FormatDate';
+create temporary function pmstr as 'com.haodou.bi.qunachi.udf.ParseMounth';
+
+create temporary function gaia as 'com.haodou.bi.recipe.udf.GetAdvertIPArea';
+create temporary function gpt as 'com.haodou.bi.recipe.udf.GetPlatformType';
+create temporary function gurc as 'com.haodou.bi.recipe.udf.GetUserReplayContent';
+create temporary function gidfa as 'com.haodou.bi.recipe.udf.GetIDFAFromDeviceId';
+create temporary function gtifurl as 'com.haodou.bi.recipe.udf.GetTopicIdFromURL';
+create temporary function urldecode as 'com.haodou.bi.recipe.udf.HiveURLDecoder';
+create temporary function urlencode as 'com.haodou.bi.recipe.udf.HiveURLEncoder';
+create temporary function gudid as 'com.haodou.bi.recipe.udf.GetUninstallDeviceIdUUID';
+create temporary function gcpc as 'com.haodou.bi.recipe.udf.GetContentPictureCount';
+create temporary function grifurl as 'com.haodou.bi.recipe.udf.GetRecipeIdFromURL';
+create temporary function gmtfhua as 'com.haodou.bi.recipe.udf.GetMobileTypeFromHttpUserAgent';
+create temporary function gaidfurl as 'com.haodou.bi.recipe.udf.GetAppIdFromURL';
+create temporary function gfidfurl as 'com.haodou.bi.recipe.udf.GetCarefullySelectedBoardTypeFromData';
+create temporary function gtifp as 'com.haodou.bi.recipe.udf.GetTypeIdFromParameter';
+create temporary function gmifp as 'com.haodou.bi.recipe.udf.GetModelIdFromParameter';
+create temporary function gamidfurl as 'com.haodou.bi.recipe.udf.GetAlbumIdFromURL';
+create temporary function gaidfua as 'com.haodou.bi.recipe.udf.GetAppIdFromUserAgent';
+create temporary function gpfc as 'com.haodou.bi.recipe.udf.GetPictureFromContent';
+create temporary function gfnfp as 'com.haodou.bi.recipe.udf.GetFunctionNameFromParameter';
+
+create temporary function ggifp as 'com.haodou.bi.group.udf.GetGroupIdFromPath';
+create temporary function hrank as 'com.haodou.bi.group.udf.TradeUDF';
+create temporary function gffp as 'com.haodou.bi.group.udf.GetFavoriteFromPath';
+
+-- set mapreduce.job.queuename=alpha;
+-- add jar /usr/lib/hadoop/lib/hadoop-lzo.jar;

@@ -1,0 +1,73 @@
+topic.getinfo	话题详情页
+search.getlist	老版搜索或无场景搜索
+search.getlist-t1	分类标签
+search.getlist-t2	热门标签
+search.getlist-k1	关键词搜索
+search.getlist-k2	列表页标签
+search.getlist-k3	菜谱详情页标签
+search.getlistv2	老版搜索v2
+search.getlistv3	老版搜索v3
+info.getinfo	菜谱详情页
+info.getinfov2	菜谱详情页v2
+info.getinfov3	菜谱详情页v3
+info.getalbuminfo	专辑
+search.getsearchindex	关键词搜索综合结果
+wiki.getlistbytype	厨房宝典或营养餐桌列表页
+rank.getrankview	排行榜
+recipe.getcollectrecomment	精选栏目（热门菜谱等）
+rank.getranklist	更多排行榜
+search.getcatelist	分类栏目
+recipeuser.getuserinfo	获取用户信息
+stuff.getstuffinfo	旧版食材百科
+info.getfoodinfo	食材百科
+recipe.getalbumlist	更多专辑
+search.gettopiclist	搜索中更多话题
+recipephoto.photoview	成果照点击
+info.downloadinfo	下载	1
+info.shake	摇一摇	1
+share.sharefeed	分享	1
+share.share	分享旧	1
+comment.getlist	查看评论	1
+search.getcatelistv2	分类栏目v2
+search.getcatelistv3	分类栏目v3
+topic.getlist	查看话题列表
+recipephoto.getproducts	成果照列表
+favorite.add	收藏	1
+favorite.addrecipe	收藏菜谱	1
+like.add	喜欢菜谱	1
+digg.digg	赞成果照	1
+passport.bindconnectstatus	绑定
+favorite.getcollectlist	获取收藏列表
+favorite.renamemyalbum	重命名收藏文件夹	1
+favorite.addmyalbum	添加收藏文件夹	1
+favorite.del	删除收藏	1
+recipeuser.getuserrecipelist	获取用户菜谱列表
+info.saveinfo	保存菜谱草稿	1
+notice.getusernotice	读取通知
+message.getmessagelist	读取消息
+message.clearonemessagelist	清除一条消息
+recipeuser.getfriendlist	获取朋友列表
+account.checkin	签到
+recipeuser.getuserbyname	搜索豆友
+recipeuser.follow	关注
+recipeuser.unfollow	取消关注
+recipeuser.recuser	recipeuser.recuser
+recipeuser.getfans	获取粉丝
+
+#发布资源
+recipephoto.upload	发布成果照	2
+info.uploadphoto	上传菜谱照片	2
+info.updateandpublic	发布菜谱	3
+comment.addcomment	发表评论	2
+
+#旧版接口
+collect.getinfo	旧版专辑
+collect.getrecomlist	旧版获取专辑列表
+stuff.getsublistbyid	旧版食材子类类表
+stuff.getall	旧版食材列表
+recipephoto.getrecmdlist	旧版成果照列表
+recipephoto.diffphoto	recipephoto.diffphoto
+collect.getrecipe	collect.getrecipe
+info.getlastestinfo	旧版读取缓存的菜谱详情页
+
+
