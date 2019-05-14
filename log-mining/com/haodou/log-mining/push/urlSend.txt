@@ -1,0 +1,8 @@
+#for package.py testPackWithUrlType
+#cat urlSend.txt | python package.py testPackWithUrlType > message.cmd
+
+#2015-10-29	http://m.haodou.com/mall/index.php?r=wap/goods&id=43	恭喜您获得100元红包，热销商品任你选	daojia_jira_10581_20151029
+#2015-11-11	http://m.haodou.com/mall/index.php?r=wap/goods&id=5	卡爆了？剁手啦？这里还有100元优惠券等你用.	daojia_zhangfei_20151111
+#2015-12-04	http://m.haodou.com/mall/index.php?r=wap/goods&id=95	【15元起包邮】滋补养颜喝靓汤→	daojia_tang_20151204
+2015-12-15	http://m.haodou.com/mall/index.php?r=wap/goods&id=95	全场9.9元起还！包！邮！喝汤暖胃，猛戳→	daojia_tang_20151215
+

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head><title>新词发现</title></head>
+    <body>
+	<p>begin:{{begin}} &nbsp; end:{{end}}</p>
+	<p> 一行两个数据，第一列是之前的数量，第二列当前的数量
+因为默认选了所有时间，之前就没有数据了，所以都是0 </p>
+	{% for uw,w,an,n in lines %}
+		<a href="/feed/search?word={{uw}}&begin={{ubegin}}&end={{uend}}" >{{w}}</a> &nbsp; {{an}} &nbsp; {{n}}
+		<br>
+	{% end %}
+    </body>
+</html>
+
+

@@ -1,0 +1,14 @@
+search.getlist	search.getsearchindex
+favorite.isfav	topic.getinfo
+favorite.isfav	info.getinfo
+favorite.isfav	info.getalbuminfo
+search.getlist	search.getsuggestion
+search.getsearchindex	search.getsuggestion
+search.getlist	search.gettopiclist
+search.getlist	search.getalbumlist
+search.getsuggestion	search.gettopiclist
+search.getsuggestion	search.getalbumlist
+search.getlist	search.getsuggestion
+tag.wap	search.getsuggestion
+search.getcatelist	tag.wap
+

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head><title>{{word}}</title></head>
+    <body>
+        <ul>
+		<p>begin:{{begin}} &nbsp; end:{{end}}</p>
+		<p>结果数：{{totalNum}}</p>
+		{% for w,sn,uw in subs%}
+			<a href="/feed/search?word={{uw}}&begin={{ubegin}}&end={{uend}}" >{{w}}</a>&nbsp;{{sn}}<br>
+		{% end %}
+	  
+		{% for c1,c2,c3,c4,c5,uuid,channel,createTime,version,tagStr in lines %}
+			<li><p>
+				{{c1}}<b>{{c2}}</b>{{c3}}<b>{{c4}}</b>{{c5}}&nbsp;{{uuid}}&nbsp;{{version}}&nbsp;{{channel}}&nbsp;{{createTime}} <br> {{tagStr}}
+			<p></li> 
+		{% end %}
+        </ul>
+    </body>
+</html>
+
+

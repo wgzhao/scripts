@@ -1,0 +1,16 @@
+--add jar /home/likunjian/hive-json-serde.jar;
+add jar /usr/lib/hive/lib/hive-contrib-0.13.0.2.1.5.0-695.jar;
+-- 连到Hbase需要依赖的jar包
+add jar /usr/lib/hive/lib/hive-hbase-handler-0.13.0.2.1.5.0-695.jar;
+add jar /usr/lib/hbase/lib/hbase-common-0.98.0.2.1.5.0-695-hadoop2.jar;
+add jar /usr/lib/zookeeper/zookeeper.jar;
+add jar /usr/lib/hbase/lib/guava-12.0.1.jar;
+-- add jar /usr/lib/hive/lib/protobuf-java-2.5.0.jar;
+add jar /usr/lib/hbase/lib/hbase-client-0.98.0.2.1.5.0-695-hadoop2.jar;
+add jar hdfs://hdcluster/udf/lib/htmlparser-1.5.jar;
+add jar hdfs://hdcluster/udf/haodoubihiveudf.jar;
+create temporary function gfmt as 'com.haodou.bi.qunachi.udf.GetFoodMasterType';
+create temporary function gaia as 'com.haodou.bi.recipe.udf.GetAdvertIPArea';
+create temporary function gpt as 'com.haodou.bi.recipe.udf.GetPlatformType';
+create temporary function fd as 'com.haodou.bi.qunachi.udf.FormatDate';
+create temporary function gurc as 'com.haodou.bi.recipe.udf.GetUserReplayContent';
