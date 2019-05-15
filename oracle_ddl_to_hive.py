@@ -195,10 +195,13 @@ def combine_type(value):
     re_type += type_mapping[value.data_type]
   else:
     re_type += value.data_type.lower()
+
   if value.scale:
     re_type += '({},{})'.format(value.precision, value.scale)
   elif value.length:
     re_type += '({})'.format(value.length)
+  elif value.data_type.lower() == 'char':
+    re_type += '(1)'
   return re_type
 
 def extract_table(ddl):
