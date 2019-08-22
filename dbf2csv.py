@@ -9,6 +9,8 @@ import struct
 from multiprocessing import Pool, cpu_count
 import argparse
 from tempfile import mkdtemp
+from math import log2
+import mmap
 
 def get_meta(dbf, codec='GBK'):
     fp = open(dbf, 'rb')
@@ -43,30 +45,30 @@ def dbf2csv(infile, outfile, offset, num, meta, sep=',', codec='GBK'):
     #self._esc = None
     # Reading as binary so bytes will always be returned
     #print(f"task #{os.getpid()} is running")
-    fp = open(infile, 'rb')
-    fp.seek(meta['offset'] + offset)
     fw = open(outfile, 'w', encoding='UTF8')
-    for _ in range(num):
-        try:
-            record = struct.unpack(meta['fmt'], fp.read(meta['fmtsiz']))
-            if record[0] != b' ':
-                continue
-            result = []
-            for idx, value in enumerate(record):
-                name, typ, size = meta['fields'][idx]
-                if name == 'DeletionFlag':
-                    continue
-                value = value.decode(codec).strip()
-                if value == '-.---':
-                    value = ''
-                result.append(value)
-            fw.write(sep.join(result) + '\n')
-        except(struct.error):
-            break
-        except(UnicodeDecodeError):
-            print(f"failed to decode with {codec}: {value}")
+    with open(infile, 'rb') as f:
+        with mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ) as fp:
+            fp.seek(meta['offset'] + offset)
+            for _ in range(num):
+                try:
+                    record = struct.unpack(meta['fmt'], fp.read(meta['fmtsiz']))
+                    if record[0] != b' ':
+                        continue
+                    result = []
+                    for idx, value in enumerate(record):
+                        name, typ, size = meta['fields'][idx]
+                        if name == 'DeletionFlag':
+                            continue
+                        value = value.decode(codec).strip()
+                        if value == '-.---':
+                            value = ''
+                        result.append(value)
+                    fw.write(sep.join(result) + '\n')
+                except(struct.error):
+                    break
+                except(UnicodeDecodeError):
+                    print(f"failed to decode with {codec}: {value}")
     fw.close()
-    fp.close()
     #print(f"task #{os.getpid()} has finished")
     return True
 
@@ -77,14 +79,21 @@ if __name__ == '__main__':
     parser.add_argument('-s','--sep', help="fields separator, the defaults is comma(,)", default=',')
     parser.add_argument('-e','--codec', dest='codec', help="dbf file encoding, GBK is the default", default='GBK')
     parser.add_argument('-H','--header', dest='header', action='store_true',help="weather include header or not, default is false", default=False)
+    parser.add_argument('-n', '--processes', dest='tasks', type=int, help="Number of multiple processes to make at a time")
+
     args = parser.parse_args()
-    btime = time.time()
+    btime = time.perf_counter()
     meta = get_meta(args.infile)
-    pool = Pool(cpu_count() + 2)
-    num_per_task=100000
-    tasks = meta['numrec'] // num_per_task + 1
+    pool = Pool(cpu_count())
+    if args.tasks:
+        tasks = args.tasks
+    else:
+        #auto calcuate tasks and records got by each task
+        tasks = round(log2(meta['numrec']))
+    num_per_task = meta['numrec'] // tasks + 1
     jobs = []
     tmpdir = mkdtemp()
+    print(f"total {tasks} tasks and each task retrive about {num_per_task} records")
     for i in range(tasks):
         offset = i*meta['fmtsiz']*num_per_task
         fname = f"{tmpdir}{os.sep}{i}.txt"
@@ -92,7 +101,9 @@ if __name__ == '__main__':
         jobs.append(job)
     for idx, job in enumerate(jobs):
         job.get()
-        print("{}% compeleted".format(round((idx+1) * 100/ tasks),2))
+        pct = (idx + 1) * 100 // tasks
+        print("{}%".format(pct), end='...')
+    print()
     pool.close()
     pool.join()
     if args.header:
@@ -101,4 +112,4 @@ if __name__ == '__main__':
     else:
         os.system(f"cat {tmpdir}{os.sep}* > {args.outfile}")
     os.system(f"rm -rf {tmpdir}")
-    print(f"taken time {time.time() - btime}s")
+    print("Taken time {:.2f}s".format(time.perf_counter() - btime))
