@@ -38,6 +38,7 @@ def get_meta(dbf, codec='GBK'):
                         fieldinfo in fields])
     meta['fmtsiz'] = struct.calcsize(meta['fmt'])
     meta['offset'] = 32 + 32 * numfields + 1
+    fp.close()
     return meta
 
 def dbf2csv(infile, outfile, offset, num, meta, sep=',', codec='GBK'):
@@ -46,28 +47,27 @@ def dbf2csv(infile, outfile, offset, num, meta, sep=',', codec='GBK'):
     # Reading as binary so bytes will always be returned
     #print(f"task #{os.getpid()} is running")
     fw = open(outfile, 'w', encoding='UTF8')
-    with open(infile, 'rb') as f:
-        with mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ) as fp:
-            fp.seek(meta['offset'] + offset)
-            for _ in range(num):
-                try:
-                    record = struct.unpack(meta['fmt'], fp.read(meta['fmtsiz']))
-                    if record[0] != b' ':
+    with open(infile, 'rb') as fp:
+        fp.seek(meta['offset'] + offset)
+        for _ in range(num):
+            try:
+                record = struct.unpack(meta['fmt'], fp.read(meta['fmtsiz']))
+                if record[0] != b' ':
+                    continue
+                result = []
+                for idx, value in enumerate(record):
+                    name, typ, size = meta['fields'][idx]
+                    if name == 'DeletionFlag':
                         continue
-                    result = []
-                    for idx, value in enumerate(record):
-                        name, typ, size = meta['fields'][idx]
-                        if name == 'DeletionFlag':
-                            continue
-                        value = value.decode(codec).strip()
-                        if value == '-.---':
-                            value = ''
-                        result.append(value)
-                    fw.write(sep.join(result) + '\n')
-                except(struct.error):
-                    break
-                except(UnicodeDecodeError):
-                    print(f"failed to decode with {codec}: {value}")
+                    value = value.decode(codec).strip()
+                    if value == '-.---':
+                        value = ''
+                    result.append(value)
+                fw.write(sep.join(result) + '\n')
+            except(struct.error):
+                break
+            except(UnicodeDecodeError):
+                print(f"failed to decode with {codec}: {value}")
     fw.close()
     #print(f"task #{os.getpid()} has finished")
     return True
