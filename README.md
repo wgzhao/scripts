@@ -1,7 +1,15 @@
 # 说明
-该仓库保存所有用于[azkban](http://azkaban.github.io) 任务调度的脚本。  
-其中一部分代码采取`git submodule`方式引用其他仓库。
 
-注意，针对[azkaban](http://azkaban.github.io)自身调度任务的脚本(jobs)并不在这个仓库里，我们存放在名为[azkban-jobs](https://g.haodou.cn/wgzhao/azkaban-jobs)的任务里。
+主要是个人写的一些脚本，包括为项目写的，或者为自动化某些工作而写的，也收集一些网络上看到的很实用精巧的脚本(会注明)
+使用到的语言主要有  
+
+1. bash  
+2. python  
+3. php 
+
+
+## 一些工具的说明
+
+1. [Safari非扩展组建方式添加下载链接到Aria](./docs/aria2_service.md)
 
 
