@@ -7,8 +7,10 @@ requests
 beautifulsoup4
 m3u8
 """
+import sys
 import os
 import argparse
+import logging
 
 import requests
 from bs4 import BeautifulSoup
@@ -20,6 +22,8 @@ import re
 import ffmpeg
 import shutil
 
+# set log
+logging.basicConfig(filename='/tmp/tvideo.log', level=logging.INFO)
 
 class TwitterDownloader:
     """
@@ -46,7 +50,7 @@ class TwitterDownloader:
         if the given tweet_url starts with https://t.cn , it means it's shorten url,
         It must be get the **real** url first
         """
-        
+        logging.info(f"original url: {tweet_url} ")
         if not tweet_url.startswith('https://twitter.com/'):
             if proxy:
                 rs = requests.head(tweet_url)
@@ -60,7 +64,7 @@ class TwitterDownloader:
         usrlpaser 
         ParseResult(scheme='https', netloc='twitter.com', path='/realDonaldTrump/status/1166769660450226177/video/1', params='', query='', fragment='')
         """
-
+        logging.info(f"parsered url: {self.tweet_url}")
         path = urlparse(self.tweet_url).path
         self.tweet_data['tweet_url'] = self.tweet_url
         self.tweet_data['user'] = path.split('/')[1]
@@ -70,9 +74,6 @@ class TwitterDownloader:
         storage_dir = output_path / self.tweet_data['user'] 
         Path.mkdir(storage_dir, parents = True, exist_ok = True)
         self.storage = str(storage_dir)
-
-
-
         self.requests = requests.Session()
 
     def download(self):
@@ -80,6 +81,7 @@ class TwitterDownloader:
         # video has already download ?
         video_fpath = self.storage + '/' + self.tweet_data['id'] + '.mp4'
         if os.path.exists(video_fpath):
+            logging.info(f"video locate at {video_fpath} has exists")
             print("video has downloaded, skip it")
             return video_fpath
         # Get the bearer token
@@ -91,8 +93,6 @@ class TwitterDownloader:
         if playlist.is_variant:
             #print('Multiple resolutions found. Slurping all resolutions.')
             print("Multiple solutions found, try to download the most high solution video")
-
-           
             """
             playlists #EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=256000,RESOLUTION=480x270,CODECS="mp4a.40.2,avc1.4d001e"
             /ext_tw_video/1166768947112415233/pu/pl/480x270/7wz-fvD0iI1qf3JT.m3u8
@@ -111,12 +111,15 @@ class TwitterDownloader:
 
             # pick the best quality video
             curr_record = playlists[max(playlists.keys())]
-
+            logging.info(f"current downloaed url:{curr_record}")
             print("Downloading ", curr_record['resolution'])
             
-            self._get_video_content(video_host = video_host, fpath=curr_record['fpath'], video_url = curr_record['video_url'])
+            self._get_video_content(video_host = video_host, fpath=curr_record['fpath'], 
+                                    video_url = curr_record['video_url'])
+            logging.info(f"video has save to {video_fpath}")
             return video_fpath
         else:
+            logging.error("Single solution file not support yet")
             print("Single solution file not support yet")
             return None
 
@@ -150,13 +153,14 @@ class TwitterDownloader:
                     shutil.copyfileobj(fd, wfd, 1024 * 1024 * 10)
 
         for ts in ts_full_file_list:
+            logging.info("Merge all stream file(s) using ffmpeg")
             print('\t[*] Doing the magic ...')
             ffmpeg\
                 .input(ts)\
                 .output(str(fpath), acodec = 'copy', vcodec = 'libx264', format = 'mp4', loglevel = 'error')\
                 .overwrite_output()\
                 .run()
-
+        logging.info("Merged finished")
         print('\t[+] Doing cleanup')
 
         for ts in ts_list:
@@ -205,12 +209,13 @@ class TwitterDownloader:
             sys.exit(1)
 
         # Get m3u8
+        logging.info(f"m3u8 url: {m3u8_url}")
         m3u8_response = self.requests.get(m3u8_url)
         self.__debug('M3U8 Response', '', m3u8_response.text)
 
         m3u8_url_parse = urlparse(m3u8_url)
         video_host = m3u8_url_parse.scheme + '://' + m3u8_url_parse.hostname
-
+        logging.info(f"video host: {video_host}")
         m3u8_parse = m3u8.loads(m3u8_response.text)
 
         return [video_host, m3u8_parse]
@@ -226,7 +231,6 @@ class TwitterDownloader:
             print('[Debug] ' + '[' + msg_prefix + ']' + ' ' + msg_body + ' - ' + msg_body_full)
 
 if __name__ == '__main__':
-    import sys
 
     if sys.version_info[0] == 2:
         print('Python3 is required.')
@@ -242,4 +246,4 @@ if __name__ == '__main__':
 
     twitter_dl = TwitterDownloader(args.tweet_url, args.output, args.debug, args.proxy)
     video_fpath = twitter_dl.download()
-    print("Vide has downloaded at {}".format(video_fpath))
+    print("Video has downloaded at {}".format(video_fpath))
