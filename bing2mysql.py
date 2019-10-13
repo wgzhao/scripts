@@ -1,7 +1,8 @@
 #!/usr/bin/env python2.7
 # encoding=utf8
 import sys
-reload(sys)
+import importlib
+importlib.reload(sys)
 
 sys.setdefaultencoding('utf-8')
 
@@ -13,9 +14,9 @@ import csv
 import pandas as pd
 from os import remove
 from sqlalchemy import *
-from Queue import Queue
+from queue import Queue
 from threading import Thread
-import commands
+import subprocess
 num_worker_threads = 4
 
 tbl_search_re='rpt_app_*|rpt_grp_*|rpt_haodou_*|rpt_hoto_*|rpt_rcp_*|dw_app_function'
@@ -29,14 +30,14 @@ def list_tables():
     hql = "show tables in bing like '%s'" % tbl_search_re
     hivecur.execute(hql)
     for tbl in hivecur.fetch():
-        print tbl[0],
+        print(tbl[0], end=' ')
 
 def imp_tbl(q):
     while not q.empty():
         tbl = q.get()
         if VERBOSE:
-            print "%s begin handling table %s %s" % (8*'*',tbl,8*'*')
-            print "Step 1. get table schema"
+            print("%s begin handling table %s %s" % (8*'*',tbl,8*'*'))
+            print("Step 1. get table schema")
 
         #从hive元数据中（这里是MySQL）获得表的字段信息，并进行替换和拼接
     	create_table_sql="create table bing.%s (" % tbl
@@ -53,16 +54,16 @@ def imp_tbl(q):
     	create_table_sql= create_table_sql[:-1] +") ENGINE=InnoDB DEFAULT CHARSET=utf8;"
 
         if VERBOSE:
-            print "create statement: %s " % create_table_sql
+            print("create statement: %s " % create_table_sql)
             #print "load data statement: %s " % insert_sql
 
         if VERBOSE:
-            print "Step 2. get all table data"
+            print("Step 2. get all table data")
         #hql = "select * from %s" % tbl
         #hivecur.execute(hql)
         filepath='/tmp/%s.dat' % tbl
         cmd = "hive -S -e 'select * from bing.%s' 2>/tmp/hive_export_%s.log  |grep -v '^WARN:' >%s" % (tbl,tbl,filepath)
-        commands.getoutput(cmd)
+        subprocess.getoutput(cmd)
         # get all records and write to csv-format file
         #records = [x for x in  hivecur.fetch() ]
 
@@ -73,7 +74,7 @@ def imp_tbl(q):
         #f.close()
 
         if VERBOSE:
-            print "Step 3. load data into mysql server"
+            print("Step 3. load data into mysql server")
         # mycur.execute('drop table if exists %s' % tbl)
         # mycur.execute(create_table_sql)
         sqlengine.execute('drop table if exists %s' % tbl)
@@ -82,9 +83,9 @@ def imp_tbl(q):
         #mycur.executemany(insert_sql,records)
         #sqlengine.execute("load data local infile '/tmp/%s.dat' into table %s fields terminated by '\t'" % (tbl,tbl))
         cmd = "mysqlimport -uimp -h10.0.11.50 -pimp123 --fields-terminated-by='\t' --delete --local bing %s " % filepath
-        commands.getoutput(cmd)
+        subprocess.getoutput(cmd)
         if VERBOSE:
-            print "table %s finished" % tbl
+            print("table %s finished" % tbl)
         remove(filepath)
     # myconn.commit()
 
@@ -98,7 +99,7 @@ def export_mysql(args):
     elif not args.tbls:
         #use default table
         if VERBOSE:
-            print "get all tables in database bing"
+            print("get all tables in database bing")
         hql = "show tables in bing like '%s'" % tbl_search_re
         hivecur.execute(hql)
         dump_tables = [x[0] for x in hivecur.fetch() ]
@@ -120,7 +121,7 @@ def export_mysql(args):
         t.join()
 
 
-    print "All DONE"
+    print("All DONE")
 
 
 if __name__ == '__main__':

@@ -26,8 +26,8 @@ class StockInfo:
 
     def GetStockStrByNum(num):
         f= urllib.request.urlopen('http://qt.gtimg.cn/q=s_'+ str(num))
-        if(debug): print(f.geturl())
-        if(debug): print(f.info())
+        if(debug): print((f.geturl()))
+        if(debug): print((f.info()))
         #return like: v_s_sz000858="51~五 粮 液~000858~18.10~0.01~0.06~94583~17065~~687.07";
         return f.readline()
         f.close()
@@ -41,14 +41,14 @@ class StockInfo:
         if(debug) : print(slist)
 
         #print('*******************************')
-        print('  股票名称:', slist[1])
-        print('  股票代码:', slist[2])
+        print(('  股票名称:', slist[1]))
+        print(('  股票代码:', slist[2]))
 
-        print('  当前价格:', slist[3])
-        print('  涨    跌:', slist[4])
-        print('  涨   跌%:', slist[5],'%')
-        print('成交量(手):', slist[6])
-        print('成交额(万):', slist[7])
+        print(('  当前价格:', slist[3]))
+        print(('  涨    跌:', slist[4]))
+        print(('  涨   跌%:', slist[5],'%'))
+        print(('成交量(手):', slist[6]))
+        print(('成交额(万):', slist[7]))
         #print('date and time is :', dateandtime)
         print('*******************************')
 

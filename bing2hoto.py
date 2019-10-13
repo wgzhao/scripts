@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # encoding=utf8
 import sys
-reload(sys)
+import importlib
+importlib.reload(sys)
 
 sys.setdefaultencoding('utf-8')
 
@@ -20,7 +21,7 @@ def list_tables(hivecurl):
     hql = "show tables in bing like '%s'" % tbl_search_re
     hivecur.execute(hql)
     for tbl in hivecur.fetch():
-        print tbl[0],
+        print(tbl[0], end=' ')
     
 if __name__ == '__main__':
    
@@ -37,7 +38,7 @@ if __name__ == '__main__':
   
     args = parser.parse_args()
     if args.tbls and args.tbl_search_re:
-        print "ONLY specify one between --tables and --regex"
+        print("ONLY specify one between --tables and --regex")
         exit(1)
         
     if args.verb:
@@ -63,7 +64,7 @@ if __name__ == '__main__':
     if not args.tbls:
         #use default table
         if DEBUG:
-            print "get all tables in database bing" 
+            print("get all tables in database bing") 
         hql = "show tables in bing like '%s'" % args.tbl_search_re
         hivecur.execute(hql)
         dump_tables = [x[0] for x in hivecur.fetch() ]
@@ -72,8 +73,8 @@ if __name__ == '__main__':
         
     for tbl in dump_tables:
         if DEBUG:
-            print "%s begin handling table %s %s" % (8*'*',tbl,8*'*')
-            print "Step 1. get all data and table schema"
+            print("%s begin handling table %s %s" % (8*'*',tbl,8*'*'))
+            print("Step 1. get all data and table schema")
         hql = "select * from %s" % tbl
         hivecur.execute(hql)
         
@@ -87,7 +88,7 @@ if __name__ == '__main__':
         f.close()
         
         if DEBUG:
-            print "Step 2. assembly SQL statement"
+            print("Step 2. assembly SQL statement")
             
         #get table schema,assembly create statement according to hive schema
         tbl_schema = hivecur.getSchema()
@@ -100,18 +101,18 @@ if __name__ == '__main__':
         create_table_sql =create_table_sql[:-1] +  ") ENGINE=InnoDB DEFAULT CHARSET=utf8;"
         
         if DEBUG:
-            print "create statement: %s " % create_table_sql
+            print("create statement: %s " % create_table_sql)
             #print "load data statement: %s " % insert_sql
         
         if DEBUG:
-            print "Step 3. load data into %s.%s" % (args.mydbname,tbl)
+            print("Step 3. load data into %s.%s" % (args.mydbname,tbl))
         mycur.execute('drop table if exists %s' % tbl)
         mycur.execute(create_table_sql)
         #mycur.executemany(insert_sql,records)
         mycur.execute("load data local infile '/tmp/%s.dat' into table %s.%s fields terminated by ','" % (tbl,args.mydbname,tbl))
         remove(filepath)
         if DEBUG:
-            print "table %s finished" % tbl
+            print("table %s finished" % tbl)
         
     myconn.commit()
         

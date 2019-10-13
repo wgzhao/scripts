@@ -6,15 +6,16 @@
 get all links from file or stdin or url
 '''
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import sys
 import os
-reload(sys)
+import importlib
+importlib.reload(sys)
 sys.setdefaultencoding('utf-8')
 try:
     from BeautifulSoup import BeautifulSoup as bs
 except ImportError:
-    print "Install BeautifulSoup first"
+    print("Install BeautifulSoup first")
     sys.exit(2)
     
 def get_content():
@@ -24,7 +25,7 @@ def get_content():
     if os.path.exists(sys.argv[1]):
         return open(sys.argv[1]).read()
      
-    return urllib2.urlopen(sys.argv[1]).read()
+    return urllib.request.urlopen(sys.argv[1]).read()
     
     
     
@@ -32,8 +33,8 @@ if __name__ == '__main__':
     
     try:
         content = get_content()
-    except Exception,err:
-        print "cat not get anything %s" % err
+    except Exception as err:
+        print("cat not get anything %s" % err)
         exit(1)
     soup = bs(content)
     urls=[]
@@ -43,4 +44,4 @@ if __name__ == '__main__':
     
     #remove duplicate items
     urls = list(set(urls))
-    print '\n'.join(urls)
+    print('\n'.join(urls))

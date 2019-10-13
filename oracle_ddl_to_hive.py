@@ -213,7 +213,7 @@ def extract_table(ddl):
   else:
     table_result[schema] = {tbl:[]}
 
-  for col in t.columns.values():
+  for col in list(t.columns.values()):
     table_result[schema][tbl].append({'colname':col.name,'type':combine_type(col)})
     
 def extract_comment(item, flag='column'):
@@ -262,7 +262,7 @@ def convert(ddl_sql):
 
 if __name__ == '__main__':
   if len(sys.argv) < 3:
-    print('Usage: {} <oracle_ddl_file> <output_file> [delimiter]'.format(sys.argv[0]))
+    print(('Usage: {} <oracle_ddl_file> <output_file> [delimiter]'.format(sys.argv[0])))
     sys.exit(1)
   filepath = sys.argv[1]
   outfile = sys.argv[2]

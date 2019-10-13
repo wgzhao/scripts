@@ -9,15 +9,16 @@ mysql2hive.py -B haodou -P 3306
 import os
 import threading
 import time
-import commands
+import subprocess
 import logging
 import argparse
 import sys
-reload(sys)
+import importlib
+importlib.reload(sys)
 sys.setdefaultencoding('utf-8')
 from random import shuffle,randint
 import MySQLdb
-import ConfigParser
+import configparser
 # setup environment variable specify locale
 os.environ['LANG'] = 'zh_CN.UTF-8'
 os.environ['LANGUAGE '] = 'zh_CN.UTF-8'
@@ -37,7 +38,7 @@ class MyThread(threading.Thread):
     return self.res
 
   def run(self):
-    self.res = apply(self.func,self.args)
+    self.res = self.func(*self.args)
 
 
 
@@ -59,7 +60,7 @@ def execjob(db,excludetbls=None):
     cmd += " --direct --hive-overwrite --hive-import --hive-database " + newdb + "  --create-hive-table "
     cmd += ' --fields-terminated-by \001 --hive-delims-replacement \002 --optionally-enclosed-by \'"\' -- --default-character-set utf8 >>%s 2>&1' % logpath
     if self.options.dryrun:
-        print cmd
+        print(cmd)
     else:
         os.system(cmd)
     logging.debug("---- job %s finished  -- " % jobname)
@@ -94,18 +95,18 @@ def import_tbls(dbname,tblnames,options):
     loc = options['hivebasedir'] + "/" + hivedb
     cmd = "hive -S -e \"create database if not exists %s location '%s'\"" %(hivedb,loc)
     if options['dryrun']:
-        print cmd
+        print(cmd)
     else:
-        commands.getoutput(cmd)
+        subprocess.getoutput(cmd)
     #delete exists table
     cmd = 'use %s; ' % hivedb
     for tbl in tblnames:
         hivetbl = tbl.lower()
         cmd +=' drop table if exists `%s`; ' % hivetbl
     if options['dryrun']:
-        print "hive -S -e '%s'" % cmd
+        print("hive -S -e '%s'" % cmd)
     else:
-        commands.getoutput("hive -S -e '%s'" % cmd)
+        subprocess.getoutput("hive -S -e '%s'" % cmd)
 
     for tbl in tblnames:
         #delete exists hive table
@@ -117,10 +118,10 @@ def import_tbls(dbname,tblnames,options):
         cmd += " --hive-overwrite --hive-import --hive-database " + hivedb + "  --create-hive-table  --hive-table " + hivetbl
         cmd += ' --fields-terminated-by \001 --hive-delims-replacement \002 --optionally-enclosed-by \'"\' -- --default-character-set utf8 --set-gtid-purged=OFF >>%s  2>&1' % logpath
         if options['dryrun']:
-            print cmd
+            print(cmd)
         else:
             logging.debug("----- start job %s  ----- " % jobname)
-            commands.getoutput(cmd)
+            subprocess.getoutput(cmd)
             logging.debug("---- job %s finished  -- " % jobname)
 
 def main():
@@ -129,7 +130,7 @@ def main():
     #file format is like :
     #
     if self.options.configfile:
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         config.read(self.options.configfile)
         dbs = config.items('db')
 
@@ -147,12 +148,12 @@ def main():
     #if specify table(s)
     if self.options.tblname:
         if not self.options.dbname:
-            print "specify table name(s) required specify database name"
+            print("specify table name(s) required specify database name")
             exit(2)
         else:
             dbs = self.options.dbname.split(',')
             if len(dbs) > 1:
-                print "database requires ONLY one but get %s" % len(dbs)
+                print("database requires ONLY one but get %s" % len(dbs))
                 exit(3)
             else:
                 self.import_tbls(self.options.dbname,self.options.tblname.split(','))
@@ -170,7 +171,7 @@ def main():
     open(fname,'w').write('\n'.join(hql))
     cmd = "hive -S -f %s" % fname
     if self.options.dryrun:
-        print cmd
+        print(cmd)
     else:
         os.system(cmd)
 
@@ -181,8 +182,8 @@ def main():
             try:
                 self.cur.execute(sql)
                 tblnames = [x[0] for x in self.cur.fetchall()]
-            except Exception,err:
-                print "failed to execute sql %s : %s " % (sql,err)
+            except Exception as err:
+                print("failed to execute sql %s : %s " % (sql,err))
                 exit(1)
 
         t = MyThread(self.import_tbls,(db,tblnames),self.import_tbls.__name__)
@@ -214,7 +215,7 @@ if __name__ == '__main__':
 
     args = parse.parse_args()
 
-    print "view %s for details" % logpath
+    print("view %s for details" % logpath)
 
     logging.basicConfig(filename = logpath,format='%(levelname)s:%(asctime)s %(msg)s',datefmt = '%Y-%m-%d %H:%M:%S',level=logging.DEBUG)
 
@@ -227,7 +228,7 @@ if __name__ == '__main__':
     #file format is like :
     #
     if opts['configfile']:
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         config.read(opts['configfile'])
         dbs = config.items('db')
         options = opts.copy()
@@ -245,7 +246,7 @@ if __name__ == '__main__':
     #if specify table(s)
     if opts['tblname']:
         if not opts['dbname'] or len(opts['dbname']) >1 :
-            print "specify table name(s) MUST required specify ONLY one database name"
+            print("specify table name(s) MUST required specify ONLY one database name")
             exit(2)
         else:
             import_tbls(opts['dbname'][0],opts['tblname'],opts)
@@ -277,8 +278,8 @@ if __name__ == '__main__':
             try:
                 cur.execute(sql)
                 tblnames = [x[0] for x in cur.fetchall()]
-            except Exception,err:
-                print "failed to execute sql %s : %s " % (sql,err)
+            except Exception as err:
+                print("failed to execute sql %s : %s " % (sql,err))
                 exit(1)
 
         t = MyThread(import_tbls,(db,tblnames,opts),import_tbls.__name__)

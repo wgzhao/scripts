@@ -10,12 +10,12 @@ chcode ./ gb2312
 '''
 
 def usage():
-    print '''
+    print('''
     将指定目录下的文件或者目录统一按照指定的编码方式编码，默认是utf-8
     用法
     chcode <dir> [encode]
     chcode ./ gb2312
-    '''
+    ''')
     sys.exit(1)
     
 def chcode(dir,encodinf='utf-8'):
@@ -23,9 +23,9 @@ def chcode(dir,encodinf='utf-8'):
         if os.path.isdir(f):
             chcode("%s/%s" % (dir,f),encodinf)
         charset = chardet.detect(f)['encoding']
-        print charset
-        fname = unicode(f,charset)
-        os.rename(f,unicode.encode(fname,encoding))
+        print(charset)
+        fname = str(f,charset)
+        os.rename(f,str.encode(fname,encoding))
         
 if __name__ == '__main__':
     if len(sys.argv) < 2:

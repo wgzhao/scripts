@@ -10,7 +10,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.header import Header
 from jinja2 import Template
-from commands import getoutput
+from subprocess import getoutput
 import sqlite3
 
 class DBValidate():
@@ -57,7 +57,7 @@ class DBValidate():
         '''
         self.dbsResult={}
         self.dbInsts = {3306:'hd_',3307:'rcp_'}
-        for port in self.dbInsts.keys():
+        for port in list(self.dbInsts.keys()):
             self.dbsResult[port] = []
        
             
@@ -144,9 +144,9 @@ class DBValidate():
             for row in self.cur.fetchall():
                 cols[row[0] -1 ] = row[1] #row[0] is column order ,start from 1 and row[1] is column name
             col_len = len(cols)
-            col_keys = cols.keys()    
+            col_keys = list(cols.keys())    
             #获得该表的数据记录数
-            sql = "select %s from %s.%s order by rand() limit 20" % (','.join(cols.values()),schema,tbl)
+            sql = "select %s from %s.%s order by rand() limit 20" % (','.join(list(cols.values())),schema,tbl)
             self.cur.execute(sql)
             record_rows = self.cur.fetchall()
             validate_pass = True
@@ -157,10 +157,10 @@ class DBValidate():
                     rand_col_pos = col_keys[0]
                     rand_col_name = cols[rand_col_pos]
                     rand_col_value = row[rand_col_pos]
-                except Exception,err:
-                    print "key error on table %s.%s : %s " % (schema,tbl,err)
-                    print col_keys
-                    print "rand_col_pos is %d" % rand_col_pos
+                except Exception as err:
+                    print("key error on table %s.%s : %s " % (schema,tbl,err))
+                    print(col_keys)
+                    print("rand_col_pos is %d" % rand_col_pos)
                     continue
                 
                 if rand_col_value == '' or (isinstance(rand_col_value,str) and len(rand_col_value) > 100):   #maybe it is serial-data,skip it
@@ -230,7 +230,7 @@ def getHiveTableCnt():
             res.append("('%s','%s','%s','%s')" % (db.replace('_'+ymd,''),tbl,ymd,cnt))
     
     #print result for save 
-    print res
+    print(res)
     #step 5. dump result into sqlite 
     conn = sqlite3.connect('/home/weiguo/hivetbl.db')
     c = conn.cursor()
@@ -244,7 +244,7 @@ def main():
     toEmail = ['zhaoweiguo@haodou.com','dc@haodou.com']
     dv = DBValidate()
     
-    for port in dv.dbInsts.keys():
+    for port in list(dv.dbInsts.keys()):
         dv.get_db_tbl_count(port)
 
     html = dv.render_report()

@@ -225,10 +225,10 @@ class TwitterDownloader:
             return
 
         if self.debug == 1:
-            print('[Debug] ' + '[' + msg_prefix + ']' + ' ' + msg_body)
+            print(('[Debug] ' + '[' + msg_prefix + ']' + ' ' + msg_body))
 
         if self.debug == 2:
-            print('[Debug] ' + '[' + msg_prefix + ']' + ' ' + msg_body + ' - ' + msg_body_full)
+            print(('[Debug] ' + '[' + msg_prefix + ']' + ' ' + msg_body + ' - ' + msg_body_full))
 
 if __name__ == '__main__':
 
@@ -246,4 +246,4 @@ if __name__ == '__main__':
 
     twitter_dl = TwitterDownloader(args.tweet_url, args.output, args.debug, args.proxy)
     video_fpath = twitter_dl.download()
-    print("Video has downloaded at {}".format(video_fpath))
+    print(("Video has downloaded at {}".format(video_fpath)))

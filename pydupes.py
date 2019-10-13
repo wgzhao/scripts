@@ -80,7 +80,7 @@ if __name__ == "__main__":
     
     if len(argv) < 2:
         try:
-            path = raw_input('pls input dir:')
+            path = input('pls input dir:')
         except:
             path = ''
     else:
@@ -89,7 +89,7 @@ if __name__ == "__main__":
     
     dupes = findDupes(path)
     
-    for k,v in dupes.items():
-        print
+    for k,v in list(dupes.items()):
+        print()
         for filename in v:
-            print filename
+            print(filename)
