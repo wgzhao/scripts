@@ -10,7 +10,7 @@ input {
 }
 body {
 	background-color: #F6F6F6;
-	font-family: "ĞÂËÎÌå";
+	font-family: "æ–°å®‹ä½“";
 }
 body,td,th {
 	font-size: 12px;
@@ -20,7 +20,7 @@ body,td,th {
 </head>
 <?php
 		
-define('QQWRY' , 'QQWry.Dat' ) ; 
+define('QQWRY' , './qqwry.dat' ) ; 
 
 function IpToInt($Ip) { 
     $array=explode('.',$Ip); 
@@ -47,12 +47,12 @@ class TQQwry
     var $EndIP   = 0; 
     var $Country = ''; 
     var $Local   = ''; 
-    var $CountryFlag = 0; // ±êÊ¶ CountryÎ»ÖÃ 
+    var $CountryFlag = 0; // æ ‡è¯† Countryä½ç½® 
 
-                          // 0x01,Ëæºó3×Ö½ÚÎªCountryÆ«ÒÆ,Ã»ÓĞLocal 
+                          // 0x01,éšå3å­—èŠ‚ä¸ºCountryåç§»,æ²¡æœ‰Local 
 
-                          // 0x02,Ëæºó3×Ö½ÚÎªCountryÆ«ÒÆ£¬½Ó×ÅÊÇLocal 
-                          // ÆäËû,Country,Local,LocalÓĞÀàËÆµÄÑ¹Ëõ¡£¿ÉÄÜ¶àÖØÒıÓÃ¡£ 
+                          // 0x02,éšå3å­—èŠ‚ä¸ºCountryåç§»ï¼Œæ¥ç€æ˜¯Local 
+                          // å…¶ä»–,Country,Local,Localæœ‰ç±»ä¼¼çš„å‹ç¼©ã€‚å¯èƒ½å¤šé‡å¼•ç”¨ã€‚ 
     var $fp; 
     var $FirstStartIp = 0; 
     var $LastStartIp = 0; 
@@ -170,7 +170,7 @@ class TQQwry
             $this->getCountry ( ) ; 
         }else { 
             $nRet = 3 ; 
-            $this->Country = 'Î´Öª' ; 
+            $this->Country = 'æœªçŸ¥' ; 
             $this->Local = '' ; 
         } 
         fclose ( $this->fp ) ; 
@@ -183,7 +183,7 @@ function ip2location ( $ip )
 { 
     $wry = new TQQwry ; 
     $nRet = $wry->qqwry ( $ip ); 
-    //¿ÉÒÔÀûÓÃ $nRet×öÒ»Ğ©ÊÂÇé£¬ÎÒÊÇÈÃËû×Ô¶¯¼ÇÂ¼Î´ÖªIPµ½Ò»¸ö±í,´úÂë¾Í²»Ğ´ÁË¡£ 
+    //å¯ä»¥åˆ©ç”¨ $nRetåšä¸€äº›äº‹æƒ…ï¼Œæˆ‘æ˜¯è®©ä»–è‡ªåŠ¨è®°å½•æœªçŸ¥IPåˆ°ä¸€ä¸ªè¡¨,ä»£ç å°±ä¸å†™äº†ã€‚ 
   	return "Country:  ".$wry->Country."<br>Local:  ".$wry->Local ; 
 } 
 
