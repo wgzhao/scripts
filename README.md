@@ -1,12 +1,6 @@
 # 说明
 
 主要是个人写的一些脚本，包括为项目写的，或者为自动化某些工作而写的，也收集一些网络上看到的很实用精巧的脚本(会注明)
-使用到的语言主要有  
-
-1. bash  
-2. python  
-3. php 
-
 
 ## 一些工具的说明
 
@@ -32,7 +26,7 @@
 
 [xinfadi_crawler.py](./xinfadi_crawler.py) 多进程下载[北京新发地批发市场](http://www.xinfadi.com.cn/marketanalysis/0/list/1.shtml)蔬菜行情价格为CSV格式
 
-[ipcalc.pl](./ipcalc.pl) IP地址计算工具，用非常漂亮的方式打印IP网段，子网以及子网包括的主机数量等
+[ipcalc.pl](./ipcalc.pl) IP地址计算工具，用非常漂亮的方式打印IP网段，子网以及子网包括的主机数量等，来源于 http://jodies.de/ipcalc
 
 [ipcalc.py](./ipcal.py) 用Python实现的 [ipcalc.pl](./ipcalc.pl)
 
@@ -45,3 +39,23 @@
 [getpics.py](./getpics.py) 从PowerPoint文件中提出所有的图片
 
 [orcle_ddl_to_hive.py](./oracle_ddl_to_hive.py) 把Oracle导出的DDL语句转为兼容Hive的DDL语句，包括字段注释，表注释信息
+
+[mysql2hive.py](./mysql2hive.py) 利用Sqoop工具导出MySQL数据库到Hive，支持库倒入，表倒入，表正则表达式，排除特定表等选项，支持文件读取
+
+[ocf_kingbase.sh](./ocf_kingbase.sh) 一个基于[Linux HA Project](http://www.linux-ha.org/wiki/Main_Page) 的OCF组件例子，用来控制某个服务的启动停止和监控
+
+[ed2k_monitor.py](./ed2k_monitor.py) 监控剪贴板，如果有ed2k链接，则转为正确的编码，主要用于某些特定网站的ed2k链接编码不正确的情况
+
+[ed2klinks.py](./ed2klinks.py) 从给出的URL链接里提取所有的ed2k链接，主要用于批量下载
+
+[getlinks.py](./getlinks.py) 从给出的内容或者链接里提取所有的链接地址，主要用于批量下载
+
+[ip.php](./ip.php) 一个[纯真IP地址库](http://update.cz88.net/ip)的查询工具
+
+[qqwry_ip.py](./qqwry_ip.py) [ip.php](./ip.php) 工具的 Python 实现，增加了自动下载[纯真IP地址库](http://update.cz88.net/ip)
+
+[bond.py](./bond.py) 一个TK编程练习脚本，用来生成Linux下多个网卡bond的配置文件，支持图形界面和命令行界面
+
+[chgcode.py](./chgcode.py) 批量修改指定目录下所有文件的内容编码
+
+[fixeth.sh](./fixeth.sh) 设置Linux下网卡位置固定的配置文件
