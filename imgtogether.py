@@ -2,7 +2,7 @@
 """\
     Utility which put some movie screenshots together, each screenshot only reserved subtitle
 
-    $0 -d ./screenshots -r sc_*.png -resize -o all.png 
+    $0 -d ./screenshots -r sc_*.png -s 0.6  -p bottom -o all.png 
 """
 import sys
 import os
@@ -10,7 +10,6 @@ import cv2
 import numpy as np
 from glob import glob
 from argparse import ArgumentParser
-
 
 def together(args):
     if args.basedir.startswith('~'):
