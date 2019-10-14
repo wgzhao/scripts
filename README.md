@@ -59,3 +59,5 @@
 [chgcode.py](./chgcode.py) 批量修改指定目录下所有文件的内容编码
 
 [fixeth.sh](./fixeth.sh) 设置Linux下网卡位置固定的配置文件
+
+[imgtogether.py](./imgtogether.py) 截图拼接，用于视频多个截图的拼接，保留字幕内容
