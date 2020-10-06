@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding:utf8 -*-
 #encoding:utf8
 ##
@@ -6,16 +6,10 @@
 get all links from file or stdin or url
 '''
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import sys
 import os
-reload(sys)
-sys.setdefaultencoding('utf-8')
-try:
-    from BeautifulSoup import BeautifulSoup as bs
-except ImportError:
-    print "Install BeautifulSoup first"
-    sys.exit(2)
+from bs4 import BeautifulSoup as bs
     
 def get_content():
     if len(sys.argv) < 2:
@@ -24,7 +18,7 @@ def get_content():
     if os.path.exists(sys.argv[1]):
         return open(sys.argv[1]).read()
      
-    return urllib2.urlopen(sys.argv[1]).read()
+    return urllib.request.urlopen(sys.argv[1]).read()
     
     
     
@@ -32,15 +26,15 @@ if __name__ == '__main__':
     
     try:
         content = get_content()
-    except Exception,err:
-        print "cat not get anything %s" % err
+    except Exception as err:
+        print("cat not get anything %s" % err)
         exit(1)
     soup = bs(content)
     urls=[]
     for url in soup.findAll('a',href=True):
-        if url['href'].startswith('http://'):
+        if url['href'].startswith('http://') or url['href'].startswith('https://'):
             urls.append(url['href'])
     
     #remove duplicate items
     urls = list(set(urls))
-    print '\n'.join(urls)
+    print('\n'.join(urls))

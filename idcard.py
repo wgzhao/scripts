@@ -14,8 +14,8 @@ def idcard(oldcard):
     return tmpcard + crc[(y % 11)]
 
 def usage():
-    print argv[0] + " <oldcard>"
-    print "e.g " + argv[0] + " 110201640506718"
+    print(argv[0] + " <oldcard>")
+    print("e.g " + argv[0] + " 110201640506718")
 
 def check(oldcard):
     '''valid oldcard '''
@@ -32,5 +32,5 @@ if __name__ == '__main__':
         usage()
         exit(1)
     oldcard = argv[1]
-    print "old card is " + oldcard
-    print "new card is " + idcard(oldcard)
+    print("old card is " + oldcard)
+    print("new card is " + idcard(oldcard))

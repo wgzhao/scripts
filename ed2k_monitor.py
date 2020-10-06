@@ -6,7 +6,7 @@ convert your ed2k links into "correct" encode
 """
 
 import gtk
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import re
 
 class Ed2kConvert(object):
@@ -22,7 +22,7 @@ class Ed2kConvert(object):
         '''
         cvtlinks = []
         for link in links:
-            link = urllib2.unquote(link)
+            link = urllib.parse.unquote(link)
             cvtlinks.append(link)
         self.clip.set_text('\n'.join(cvtlinks))
 

@@ -12,8 +12,8 @@ headers=[("JFIF", 6, "jpg"), ("GIF", 0, "gif"), ("PNG", 1, "png")]
 marker=[]
 
 def usage():
-	print "Usage: " + os.path.split(sys.argv[0])[1] + " "
-	print "\t\tfile must be powerpoint format at present!"
+	print("Usage: " + os.path.split(sys.argv[0])[1] + " ")
+	print("\t\tfile must be powerpoint format at present!")
 
 def getpic(filename="",prefix="img"):
 	try:
@@ -35,12 +35,12 @@ def getpic(filename="",prefix="img"):
 		s = s + len(curlin)
 		curlin = fid.readline()
 		i += 1
-		print i,
+		print(i, end=' ')
 		fid.seek(0)
 		j = len(marker)
 		imgnum = 0
 		if j == 0:
-			print "No images included in the document"
+			print("No images included in the document")
 			sys.exit(1)
 		for i in range(0, j):
 			if i == j-1:
@@ -71,7 +71,7 @@ def getpic(filename="",prefix="img"):
 				fid1.close()
 				imgnum += 1
 				fid.close()
-	print "%02d imgaes have been extracted from file %s\n" % (imgnum ,filename)
+	print("%02d imgaes have been extracted from file %s\n" % (imgnum ,filename))
 	
 if __name__ == "__main__":
 	if len(sys.argv[1:]) >0:

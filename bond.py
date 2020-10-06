@@ -15,14 +15,14 @@ if you want to write to files ,you MUST use --run options
 import os,sys
 from optparse import OptionParser
 import getopt
-from  Tkinter import *
-import tkSimpleDialog
+from  tkinter import *
+import tkinter.simpledialog
 
 confdir='/etc/sysconfig/network-scripts/'
 modconf='/etc/modprobe.conf'
 netconf='/etc/sysconfig/network'
 
-class guiBond(tkSimpleDialog.Dialog):
+class guiBond(tkinter.simpledialog.Dialog):
     '''
     create bonding configure files with GUI
     '''
@@ -112,16 +112,16 @@ class createBond:
             data[''.join([confdir,'ifcfg-',nic])] = 'DEVICE=%s \nUSERCTL=no \nONBOOT=yes \nMASTER=%s \nSLAVE=yes \nBOOTPROTO=none \n' % (nic,options.bond)
        
         if not options.run :
-            for k,v in data.items():
-                print 'write/append: ',k
-                print v
-                print '-' * 20
+            for k,v in list(data.items()):
+                print('write/append: ',k)
+                print(v)
+                print('-' * 20)
             return 0
-        for k,v in data.items():
+        for k,v in list(data.items()):
             try:
                 open(k).write(v)
-            except IOError,err:
-                print str(err)
+            except IOError as err:
+                print(str(err))
                 return 1
                 
                 

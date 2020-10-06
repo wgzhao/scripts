@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/env python3
  
 from optparse import OptionParser
 import os.path
@@ -23,19 +23,19 @@ parser.add_option("--input", dest="inputFile", default="",
  
 error = False
 if len(args) != 0:
-    print "ERROR: Invalid non-option arguments:"
+    print("ERROR: Invalid non-option arguments:")
     for arg in args:
-        print "  "+arg
+        print(("  "+arg))
     error = True
 if not options.stripLine and not options.stripCStyle and \
    not options.stripJavadoc and not options.stripHeaderDoc:
-    print "ERROR: Please specify at least one comment style to strip."
+    print("ERROR: Please specify at least one comment style to strip.")
     error = True
 if options.inputFile == "":
-    print "ERROR: Must specify input file to process using '--input'."
+    print("ERROR: Must specify input file to process using '--input'.")
     error = True
 elif os.path.exists(options.inputFile) == False:
-    print "ERROR: Specified input file does not exist!"
+    print("ERROR: Specified input file does not exist!")
     error = True
 else:
     file = open(options.inputFile, "r")
@@ -43,7 +43,7 @@ if error == True:
     sys.exit()
  
 (SOURCE, STRING_LITERAL, CHAR_LITERAL, SLASH, SLASH_STAR, COMMENT_LINE,
-COMMENT_CSTYLE, COMMENT_JAVADOC, COMMENT_HEADERDOC) = range(9) #state constants
+COMMENT_CSTYLE, COMMENT_JAVADOC, COMMENT_HEADERDOC) = list(range(9)) #state constants
  
 state = SOURCE
 thisChar = ''

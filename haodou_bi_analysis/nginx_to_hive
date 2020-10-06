@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-offset=${1:-"1 day ago"}
-curdate=$(date -d "$offset" +"%Y-%m-%d")
-/usr/bin/hive -S -i /home/crontab/haodou_bi_analysis/hiverc --define curdate=$curdate -f /home/crontab/haodou_bi_analysis/perday_update_nginx_to_hive.sql
-

@@ -1,8 +1,0 @@
-search.getsearchindex
-rank.getrankview
-search.getlist
-search.getcatelist
-info.getalbuminfo
-topic.getinfo
-recipe.getcollectrecomment
-

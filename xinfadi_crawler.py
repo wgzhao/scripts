@@ -45,7 +45,7 @@ async def get_table(task_q):
                             attrs = {'class': 'hq_table'})[0].iloc[:,:7]
                     df.to_csv(outfile, index=False, header=header, sep=sep)
             except Exception as err:
-                print(f"Error for url {url}: {err}")
+                print(f"Error for url {url}: {err.msg}")
 
 async def produce_tasks(n, task_q):
     for i in range(1,n+1):
@@ -60,16 +60,16 @@ async def run(num_pages):
     try:
         await asyncio.wait(workers+ [task_producer])
     except Exception as err:
-        print(err.msg)
+        print((err.msg))
 
 def main():
     num_pages = get_pages(url_base.format(1))
     if not num_pages:
         sys.exit(1)
-    print("start at", time.strftime("%F %T") )
+    print(("start at", time.strftime("%F %T") ))
     ioloop = asyncio.get_event_loop()
     ioloop.run_until_complete(asyncio.ensure_future(run(num_pages)))
-    print("end at ", time.strftime("%F %T"))
+    print(("end at ", time.strftime("%F %T")))
 
 if __name__ == '__main__':
     main()
