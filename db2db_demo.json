@@ -1,0 +1,15 @@
+{
+    "src": {
+        "jdbc": "jdbc:oracle:thin:@10.90.70.152:1521/orcl",
+        "user": "lc_select",
+        "password": "lc_select",
+        "dbtable": "TRADE.tunitstock"
+    },
+    "dest": {
+        "jdbc": "jdbc:mysql://10.90.71.93:33060?rewriteBatchedStatements=true&zeroDateTimeBehavior=convertToNull&tinyInt1isBit=false",
+        "dbtable": "xone_data.t_bond_creditrtissue",
+        "user": "root",
+        "password": "mysql.admin.pass",
+        "mode": "overwrite"
+    }
+}

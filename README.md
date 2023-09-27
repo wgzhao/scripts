@@ -1,63 +1,78 @@
 # 说明
 
-主要是个人写的一些脚本，包括为项目写的，或者为自动化某些工作而写的，也收集一些网络上看到的很实用精巧的脚本(会注明)
+该仓库用于存储预发布和生产环境的调度、管理和监控等程序
 
-## 一些工具的说明
+## tuna.py
 
-[Safari非扩展组建方式添加下载链接到Aria](./docs/aria2_service.md)   详见说明
+`tuna.py` 是给上游调度提供的统一任务执行脚本，对上游屏蔽各类任务执行的细节，对下提供各种执行任务的接入，脚本运行如下：
 
-[rescan-scsi-bus.sh](./rescan-scsi-bus.sh)  重新扫描SCSI总线，用来发现新设备，比如当你热插拔一个设备后，通过该脚本可以让Linux内核识别出新设备，而不用重启
+```shell
+usage: tuna.py [-h]
+               [-m {hive,presto,spark-sql,beeline,spark-submit,datax,shell,schema}]
+               [-i INIT] -f FILENAME [-p PARAM [PARAM ...]] [-t TIMEOUT] [-c]
+               [-u USER]
 
-[dbf2csv.py](./dbf2csv.py) 基于多进程的导出[DBF](https://en.wikipedia.org/wiki/DBF)文件为CSV格式的文件
+general purposal ETL schedule util.
 
-[qrcode.py](./qrcode.py) 生成基于给定内容的二维码
+optional arguments:
+  -h, --help            show this help message and exit
+  -m {hive,presto,spark-sql,beeline,spark-submit,datax,shell,schema}, --method {hive,presto,spark-sql,beeline,spark-submit,datax,shell,schema}
+                        choose invoke method, datax is the default
+  -i INIT, --init INIT  Initialization SQL file
+  -f FILENAME, --file FILENAME
+                        SQL from files
+  -p PARAM [PARAM ...], --param PARAM [PARAM ...]
+                        Variable substitution to apply to ETL engine
+  -t TIMEOUT, --timeout TIMEOUT
+                        max execution time(seconds) of a job0 means unlimited.
+                        defaults to 72000,
+  -c, --console         Only print message to console, not log to file
+  -u USER, --user USER  user which running job
+```
 
-[send_email.py](./send_email.py) 发送邮件，可以包含多个附件
+### 参数说明
 
-[setupvpn.sh](./setupvpn.sh) 一键创建基于pptp的VPN服务端，在Debian系统下测试通过
+- `-m` 任务执行方法，该参数仅接受 `hive,presto,spark-sql,beeline,spark-submit,datax,shell,schema`，其中的一个，如果不提供，则默认为 `datax`
+- `-f` 实际执行的任务文件，依据执行方法不同，对文件的内容要求不同
+- `-p` 该参数仅在 `-m` 参数为 `datax` 时有用，用来传递额外的控制参数给 `datax`，无特别要求，可不用
+- `-t` 任务最长可运行时间，超过运行时间而未结束的，则会被终止，程序以非零值退出
+- `-c` 日志打印在终端上
+- `-u` 该参数仅限于 `-m` 参数为 `presto` 时有用，表示调用 `presto` 的运行用户可以不是默认值(hive)
 
-[stripcomment.py](./stripcomment.py) 删除指定源代码文件中的所有注释
+`tuna` 脚本默认会写日志文件，文件目录为 `/opt/infalog/log` ，文件名的依次由下面几部分组成，最后由 `_` 合成:
 
-[text2ebook.py](./text2ebook.py) 将特定格式的文本小说文件转为epub图书，自动提取章节内容
+- `tuna` 这是固定前缀，用来区分其他程序日志
+- `<method>` 这是 `-m` 传递过来的值，用来具体执行的方法
+- `<jobname>` 任务名称，这部分是通过分析 `-f` 传递过来的文件名，去掉文件后缀后获得
+- `<timestamp>` 时间戳，任务运行的开始时间
+- `<hostname>` 任务运行所在的服务器主机名
+- `<pid>` 任务运行的进程ID
+  
+## 新接口说明
 
-[tvideo_dl.py](./tvideo_dl.py) 下载Twitter上的视频文件，支持代理
+为了实现某些不可言说的目的，在 `fsbrowser_fastapi.py` 脚本中实现了一个灵活数据查询接口功能，访问方式如下：
 
-[uninstall_hdp_completely.sh](./uninstall_hdp_completely.sh) 完整卸载[HDP集群](https://www.hortonworks.com/hdp)
+```
+/dataSelect?selectId=<select_id>&<other params>
+```
 
-[xinfadi_crawler.py](./xinfadi_crawler.py) 多进程下载[北京新发地批发市场](http://www.xinfadi.com.cn/marketanalysis/0/list/1.shtml)蔬菜行情价格为CSV格式
+该接口至少需要一个 `selectId` 参数，即查询ID号，以及其他可选参数，该接口相比之前 Java 开发四种接口的差别在于：
 
-[ipcalc.pl](./ipcalc.pl) IP地址计算工具，用非常漂亮的方式打印IP网段，子网以及子网包括的主机数量等，来源于 http://jodies.de/ipcalc
+- 所有参数均为可选参数，没有传递的参数用空值表示，需要你的 SQL 脚本支持这种方式
+- 查询源支持  `presto`, `allsql`, `clickhouse` ， 但不支持 `phoenix`
+- 与交易相关的参数会自动替换，也就是 [EDW 项目文档](https://gitlab.lczq.com/grp_ds/edw/-/blob/master/README.md) 里提到的参数均会自动替换
+- 接口支持结果下载，只需要额外传递 `_m=d` 即可，没有传递该参数或者传递为 `_m=display` 则表示为展示，和普通接口一致
+- 默认情况下，如果接口下载，则下载的文件为csv格式，同时文件名同 `selectId` 参数一致，如果要指定文件名，则可以参数 `filename=` 参数
+- 查询的 SQL 采取模板形式，比如 `select * from tbl where logdate=${TD}`, 而不是之前的 `select * from tbl where logdate=:TD`
+>- 支持的参数范围可以参考SP计算，不支持两个特殊的`${NO}`和`${NOW}`，具体定义在参数2004中，参数值在`每天夜间19点`刷新
+>- 由于数据源的采集时间不尽相同，为了避免夜间查询接口时，数据无法取到，增加数据源级别的参数，名称为`数据源编号+参数`
+  >> TD：每天夜间19点刷新  
+  >> UFTD：在UF采集完后刷新  
+  >> CWTD：在CW采集完后刷新  
+  ```sql
+  --该脚本在夜间19点后至UF采集前都无法查询到数据
+  select * from odsuf.allbranch where logdate='${TD}'
+  --该脚本可以保证一直取到最新的数据
+  select * from odsuf.allbranch where logdate='${UFTD}'
+  ```
 
-[ipcalc.py](./ipcal.py) 用Python实现的 [ipcalc.pl](./ipcalc.pl)
-
-[lunar_pg.sql](./lunar_pg.sql) 让PostgreSQL 支持农历查询的扩展
-
-[idcard.py](./idcard.py) 把15位的身份证号升级到18位
-
-[idcard.sh](./idcard.sh) [idcard.py](./idcard.py) 的 shell 实现版本
-
-[getpics.py](./getpics.py) 从PowerPoint文件中提出所有的图片
-
-[orcle_ddl_to_hive.py](./oracle_ddl_to_hive.py) 把Oracle导出的DDL语句转为兼容Hive的DDL语句，包括字段注释，表注释信息
-
-[mysql2hive.py](./mysql2hive.py) 利用Sqoop工具导出MySQL数据库到Hive，支持库倒入，表倒入，表正则表达式，排除特定表等选项，支持文件读取
-
-[ocf_kingbase.sh](./ocf_kingbase.sh) 一个基于[Linux HA Project](http://www.linux-ha.org/wiki/Main_Page) 的OCF组件例子，用来控制某个服务的启动停止和监控
-
-[ed2k_monitor.py](./ed2k_monitor.py) 监控剪贴板，如果有ed2k链接，则转为正确的编码，主要用于某些特定网站的ed2k链接编码不正确的情况
-
-[ed2klinks.py](./ed2klinks.py) 从给出的URL链接里提取所有的ed2k链接，主要用于批量下载
-
-[getlinks.py](./getlinks.py) 从给出的内容或者链接里提取所有的链接地址，主要用于批量下载
-
-[ip.php](./ip.php) 一个[纯真IP地址库](http://update.cz88.net/ip)的查询工具
-
-[qqwry_ip.py](./qqwry_ip.py) [ip.php](./ip.php) 工具的 Python 实现，增加了自动下载[纯真IP地址库](http://update.cz88.net/ip)
-
-[bond.py](./bond.py) 一个TK编程练习脚本，用来生成Linux下多个网卡bond的配置文件，支持图形界面和命令行界面
-
-[chgcode.py](./chgcode.py) 批量修改指定目录下所有文件的内容编码
-
-[fixeth.sh](./fixeth.sh) 设置Linux下网卡位置固定的配置文件
-
-[imgtogether.py](./imgtogether.py) 截图拼接，用于视频多个截图的拼接，保留字幕内容

@@ -1,0 +1,205 @@
+[
+    {
+        "host": "10.90.10.61",
+        "type": "Oracle",
+        "path": "/data/u02/dumpdir/CBBDB_%Y%m%d.dmp",
+        "offset": 1,
+        "desc": "金融商城数据库"
+    },
+    {
+        "host": "10.90.10.63",
+        "type": "Oracle",
+        "path": "/data/u02/dumpdir/CBBWXDB_%Y%m%d.dmp",
+        "offset": 1,
+        "desc": "储宝宝微信数据库"
+    },
+    {
+        "host": "10.90.10.64",
+        "type": "Oracle",
+        "path": "/data/u02/dumpdir/CBBKHDB_%Y%m%d.dmp",
+        "offset": 1,
+        "desc": "开户数据库"
+    },
+    {
+        "host": "10.90.10.89",
+        "type": "MySQL",
+        "path": "/opt/backup/mysql-%Y%m%d.sql.lzo",
+        "offset": 0,
+        "desc": "储宝宝社区数据库"
+    },
+    {
+        "host": "10.90.10.97",
+        "type": "Oracle",
+        "path": "/data/u02/dumpdir/QYXJBDB_%Y%m%d.dmp",
+        "offset": 1,
+        "desc": "企业现金宝数据库"
+    },
+    {
+        "host": "10.60.120.21",
+        "type": "MySQL",
+        "path": "/opt/backup/mysql-%Y%m%d.sql.lzo",
+        "offset": 0,
+        "desc": "储宝宝plus理财商城数据库"
+    },
+    {
+        "host": "10.60.120.22",
+        "type": "Oracle",
+        "path": "/data/oraclebak/dump_backup/%Y-%m-%d/pdp.dmp",
+        "offset": 1,
+        "desc": "储宝宝plus投顾数据库"
+    },    
+    {
+        "host": "10.60.120.25",
+        "type": "MySQL",
+        "path": "/opt/backup/mysql-%Y%m%d.sql.lzo",
+        "offset": 0,
+        "desc": "储宝宝plus投顾数据库"
+    },
+    {
+        "host": "10.60.120.38",
+        "type": "MySQL",
+        "path": "/opt/backup/mysql-%Y%m%d.sql.lzo",
+        "offset": 0,
+        "desc": "储宝宝plus基础设施数据库"
+    },
+    {
+        "host": "10.60.120.44",
+        "type": "MySQL",
+        "path": "/opt/backup/mysql-%Y%m%d.sql.lzo",
+        "offset": 0,
+        "desc": "储宝宝plus美式双录数据库"
+    },
+    {
+        "host": "10.60.120.45",
+        "type": "MySQL",
+        "path": "/opt/backup/mysql-%Y%m%d.sql.lzo",
+        "offset": 0,
+        "desc": "储宝宝plus美式双录数据库"
+    },
+    {
+        "host": "10.90.10.54",
+        "type": "Oracle",
+        "path": "/data/u02/dumpdir/WZDB_%Y%m%d.dmp",
+        "offset": 1,
+        "desc": "官网数据库"
+    },
+    {
+        "host": "10.90.20.39",
+        "type": "MySQL",
+        "path": "/data/u02/dumpdir/dzqz_%Y%m%d.sql.gz",
+        "offset": 1,
+        "desc": "电子签章数据库"
+    },
+    {
+        "host": "10.90.20.26",
+        "type": "MySQL",
+        "path": "/data/data_bak/hgzsk-%Y%m%d04.sql.gz",
+        "offset": 0,
+        "desc": "合规知识库数据库"
+    },
+    {
+        "host": "10.90.20.41",
+        "type": "MySQL",
+        "path": "/data/u02/dumpdir/cwgk_%Y%m%d23.sql.gz",
+        "offset": 1,
+        "desc": "全面预算系统数据库"
+    },
+    {
+        "host": "10.90.23.41",
+        "type": "MySQL",
+        "path": "/dbbackup/income-voucher/mysql/%Y-%m-%d-04.sql.gz",
+        "offset": 0,
+        "desc": "收益凭证数据库"
+    },
+    {
+        "host": "10.90.23.41",
+        "type": "MySQL",
+        "path": "/dbbackup/lczq-ias/mysql/%Y-%m-%d-04.sql.gz",
+        "offset": 0,
+        "desc": "新投顾数据库"
+    }, 
+    {
+        "host": "10.90.23.41",
+        "type": "MySQL",
+        "path": "/dbbackup/staff-center/mysql/%Y-%m-%d-04.sql.gz",
+        "offset": 0,
+        "desc": "员工中心数据库"
+    },     
+    {
+        "host": "10.90.23.41",
+        "type": "MySQL",
+        "path": "/dbbackup/crm/mysql/%Y-%m-%d-04.sql.gz",
+        "offset": 0,
+        "desc": "展业平台数据库"
+    },     
+    {
+        "host": "10.90.10.58",
+        "type": "MySQL",
+        "path": "/data/u02/dumpdir/zgscdb_%Y%m%d1800.sql.gz",
+        "offset": 1,
+        "desc": "资管商城"
+    },  
+    {
+        "host": "10.90.23.41",
+        "type": "MySQL",
+        "path": "/dbbackup/grp-arch/mysql/%Y-%m-%d-04.sql.gz",
+        "offset": 0,
+        "desc": "统一数据查询数据库"
+    },  
+    {
+        "host": "10.90.10.80",
+        "type": "Oracle",
+        "path": "/data/u02/dumpdir/ZXWSJYDB_%Y%m%d.dmp",
+        "offset": 0,
+        "desc": "网上直销交易数据库"
+    },
+    {
+        "host": "10.90.10.109",
+        "type": "MySQL",
+        "path": "/data/data_bak/jrzc-%Y%m%d03.sql.gz",
+        "offset": 0,
+        "desc": "资产负债数据库"
+    },
+    {
+        "host": "10.90.10.63",
+        "type": "MySQL",
+        "path": "/data/gm_backup/mysql-%Y%m%d.sql.lzo",
+        "offset": 0,
+        "desc": "国密改造数据库"
+    },
+    {
+        "host": "10.90.23.41",
+        "type": "MySQL",
+        "path": "/dbbackup/staff-center/mysql/%Y-%m-%d-04.sql.gz",
+        "offset": 0,
+        "desc": "员工中心数据库"
+    },
+    {
+        "host": "10.90.23.41",
+        "type": "MySQL",
+        "path": "/dbbackup/ims/mysql/%Y-%m-%d-04.sql.gz",
+        "offset": 0,
+        "desc": "资产管理系统数据库"
+    },
+    {
+        "host": "10.90.23.41",
+        "type": "MySQL",
+        "path": "/dbbackup/cbb-base/mysql/%Y-%m-%d-04.sql.gz",
+        "offset": 0,
+        "desc": "cbb-base 数据库"
+    },
+    {
+        "host": "10.90.23.41",
+        "type": "MySQL",
+        "path": "/dbbackup/cbb-finance/mysql/%Y-%m-%d-04.sql.gz",
+        "offset": 0,
+        "desc": "新金融商城数据库"
+    },
+    {
+        "host": "10.90.23.41",
+        "type": "MySQL",
+        "path": "/dbbackup/cbb-operation/mysql/%Y-%m-%d-04.sql.gz",
+        "offset": 0,
+        "desc": "运营中心数据库"
+    }  
+]
