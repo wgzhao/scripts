@@ -12,19 +12,20 @@ from glob import glob
 from argparse import ArgumentParser
 
 def together(args):
+    margin = args.margin
     if args.basedir.startswith('~'):
         folder = os.path.expanduser(args.basedir)
     else:
         folder = args.basedir
-    files = glob(f"{folder}/{args.wild}")
+    files = sorted(glob(f"{folder}/{args.wild}"), key=os.path.getmtime)
     img = cv2.imread(files[0])
     height = img.shape[0]
     for f in files[1:]:
         curr_img = cv2.imread(f)
         if args.subpos == 'bottom':
-            img = np.concatenate([img, curr_img[int(height*0.85):,:,:], ], axis=0)
+            img = np.concatenate([img, curr_img[int(height*margin):,:,:], ], axis=0)
         else:
-            img = np.concatenate([img, curr_img[:int(height*0.15),:,:], ], axis=0)
+            img = np.concatenate([img, curr_img[:int(height*(1 - margin)),:,:], ], axis=0)
 
     #resize image
     cv2.imwrite(f'{args.output}', 
@@ -46,6 +47,7 @@ if __name__ == '__main__':
             choices=['bottom','top'], default='bottom')
     parser.add_argument('-r','--regex', dest='wild', help='the pattern match pictures, all files in current directory by default', default='*.*')
     parser.add_argument('-s','--resize', dest='resize', type=float, help='resize the output picture, specify 0.8 if you wan reduce to 80 percent of original picture, 1 by default', default=1)
+    parser.add_argument('-m','--margin', dest='margin', type=float, help='the margin between pictures, 0.85 by default(top to bottom)', default=0.85)
     args = parser.parse_args()
 
     if args.resize > 1:
